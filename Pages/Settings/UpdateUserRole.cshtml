@@ -1,0 +1,28 @@
+﻿@page
+@model FoodDelivery.Pages.Settings.UpdateUserRoleModel
+@{
+    ViewData["Title"] = "Update User Role";
+}
+
+<h4>@ViewData["Title"]</h4>
+<p>In this page you can <strong>update</strong> any user role.</p>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<form asp-page="UpdateUserRole">
+    <div class="form-group">
+        <div class="form-group">
+            <label asp-for="Input.UserName"></label>
+            <input asp-for="Input.UserName" class="form-control" />
+            <span asp-validation-for="Input.UserName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Input.Role"></label>
+            <select asp-for="Input.Role" asp-items="Model.Roles"></select>
+            <span asp-validation-for="Input.Role"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Update User Role</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

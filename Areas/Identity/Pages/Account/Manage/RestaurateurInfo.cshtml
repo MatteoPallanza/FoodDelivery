@@ -1,0 +1,68 @@
+﻿@page
+@model FoodDelivery.Areas.Identity.Pages.Account.Manage.RestaurateurInfoModel
+@{
+    ViewData["Title"] = "Restaurateur Info";
+    ViewData["ActivePage"] = ManageNavPages.RestaurateurInfo;
+}
+
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
+<form id="restaurateur-form" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-6">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Input.Name"></label>
+                <input asp-for="Input.Name" class="form-control" />
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Address"></label>
+                <input asp-for="Input.Address" class="form-control" />
+                <span asp-validation-for="Input.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.City"></label>
+                <input asp-for="Input.City" class="form-control" />
+                <span asp-validation-for="Input.City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.PostalCode"></label>
+                <input asp-for="Input.PostalCode" class="form-control" />
+                <span asp-validation-for="Input.PostalCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Category"></label>
+                <select asp-for="Input.Category" asp-items="Model.Categories"></select>
+                <span asp-validation-for="Input.Category"></span>
+            </div>
+            <button id="update-restaurateur-button" type="submit" class="btn btn-primary">Save</button>
+        </div>
+        <div class="col-md-6">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Input.Logo" style="width: 100%;"></label>
+                @if (Model.Input.Logo != null)
+                {
+                    <img id="logo" style="width:250px;height:250px; object-fit:cover" src="data:image/*;base64,@(Convert.ToBase64String(Model.Input.Logo))">
+                }
+                else
+                {
+                    <img id="logo" style="width:250px;height:250px; object-fit:cover" src="/assets/images/default-logo.png">
+                }
+                <input type="file"
+                        accept=".png,.jpg,.jpeg,.gif,.tif"
+                        asp-for="Input.Logo"
+                        class="form-control"
+                        style="border:0px!important;padding: 0px;padding-top: 10px;padding-bottom: 30px;"
+                        onchange="document.getElementById('logo').src = window.URL.createObjectURL(this.files[0])" />
+                <span asp-validation-for="Input.Logo" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

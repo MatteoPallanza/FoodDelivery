@@ -1,0 +1,23 @@
+﻿@page
+@model FoodDelivery.Pages.Settings.RiderFeeModel
+@{
+    ViewData["Title"] = "Rider Fee";
+}
+
+<h4>@ViewData["Title"]</h4>
+<p>In this page you can manage the <strong>Rider Fee</strong>.</p>
+<form asp-page="RiderFee">
+    <div class="form-group">
+        <div class="form-group">
+            <label asp-for="Input.Fee"></label>
+            <input asp-for="Input.Fee" class="form-control" />
+            <span asp-validation-for="Input.Fee" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Fee</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/CustomValidation.js"></script>
+}

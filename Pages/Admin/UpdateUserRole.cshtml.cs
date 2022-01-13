@@ -12,7 +12,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
-namespace FoodDelivery.Pages.Settings
+namespace FoodDelivery.Pages.Admin
 {
     [Authorize(Policy=PolicyName.IsAdmin)]
     public class UpdateUserRoleModel : PageModel

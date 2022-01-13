@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace FoodDelivery.Pages.Settings
+namespace FoodDelivery.Pages.Admin
 {
     [Authorize(Policy=PolicyName.IsAdmin)]
     public class RiderFeeModel : PageModel

@@ -20,7 +20,7 @@ namespace FoodDelivery.Controllers
         }
 
         [HttpGet]
-        public Task<List<Order>> Get(string userId, string userRole, int orderStatus = -1) => _mediator.Send(new GetAllOrders() { UserId = userId, UserRole = userRole, OrderStatus = orderStatus });
+        public Task<List<OrderRequestModel>> Get(string userName, string userRole, int status) => _mediator.Send(new GetAllOrders() { UserName = userName, UserRole = userRole, Status = status });
 
     }
 }

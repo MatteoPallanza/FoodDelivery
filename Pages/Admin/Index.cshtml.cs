@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FoodDelivery.Pages.Settings
+namespace FoodDelivery.Pages.Admin
 {
     [Authorize(Policy = PolicyName.IsAdmin)]
     public class IndexModel : PageModel

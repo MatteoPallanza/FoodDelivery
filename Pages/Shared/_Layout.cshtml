@@ -24,6 +24,30 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
+                        @if (Context.User.HasClaim(c => c.Type == "Role" && c.Value == "Restaurateur"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Restaurateur/Index">Restaurateur</a>
+                            </li>
+                        }
+                        @if (Context.User.HasClaim(c => c.Type == "Role" && c.Value == "Rider"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Rider/Index">Rider</a>
+                            </li>
+                        }
+                        @if (Context.User.HasClaim(c => c.Type == "Role" && c.Value == "Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Admin/Index">Admin</a>
+                            </li>
+                        }
+                        @if (Context.User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Final/Index">Final</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

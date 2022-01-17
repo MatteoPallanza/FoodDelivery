@@ -34,6 +34,31 @@
                 });
             }
 
+            var DecimalField = function(config) {
+                jsGrid.NumberField.call(this, config);
+            };
+
+            DecimalField.prototype = new jsGrid.NumberField({
+                itemTemplate: function(value) {
+                    return value.toFixed(2);
+                },
+
+                filterValue: function() {
+                    return parseFloat(this.filterControl.val() || 0);
+                },
+
+                insertValue: function() {
+                    return parseFloat(this.insertControl.val() || 0);
+                },
+
+                editValue: function() {
+                    return parseFloat(this.editControl.val() || 0);
+                }
+
+            });
+
+            jsGrid.fields.decimal = DecimalField;
+
             $("#jsGrid").jsGrid({
                 width: "100%",
                 align: "center",
@@ -58,8 +83,8 @@
                 fields: [
                     { name: "id", type: "number", editing: false, inserting: false, visible: false},
                     { name: "name", type: "text", title: "Name", align: "center"},
-                    { name: "price", type: "number", title: "Price", align: "center"},
-                    { name: "discount", type: "number", title: "Discount", align: "center"},
+                    { name: "price", type: "decimal", title: "Price (€)", align: "center"},
+                    { name: "discount", type: "decimal", title: "Discount (€)", align: "center"},
                     //{ name: "picture", type: "text", title: "Picture", align: "center"},
                     { name: "categoryId", type: "select", title: "Category", items: @(Html.Raw(Json.Serialize(Model.Categories))), valueField: "id", textField: "name" },
                     { type: "control" }

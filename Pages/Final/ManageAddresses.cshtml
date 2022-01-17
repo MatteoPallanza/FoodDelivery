@@ -1,0 +1,69 @@
+﻿@page
+@model FoodDelivery.Pages.Final.ManageAddressesModel
+@{
+    ViewData["Title"] = "Manage Addresses";
+}
+
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+        <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+    </head>
+    <body>
+        <h4>@ViewData["Title"]</h4>
+        <p>In this page you can manage all your <strong>addresses</strong>.</p>
+        <div id="jsGrid"></div>
+    </body>
+</html>
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+    <script>
+        $(function () {
+            const url = "/api/useraddresses?userId=@Model.UserId";
+
+            let ajax = function (item, verb, json = true) {
+                return $.ajax({
+                    type: verb,
+                    url: url,
+                    data: json ? JSON.stringify(item) : item,
+                    dataType: "json",
+                    contentType: json ? "application/json" : "text/plain",
+                });
+            }
+
+            $("#jsGrid").jsGrid({
+                width: "100%",
+                align: "center",
+
+                inserting: true,
+                editing: true,
+                paging: true,
+                autoload: true,
+
+                pageSize: 15,
+                pageButtonCount: 5,
+
+                deleteConfirm: "Do you really want to delete the item?",
+
+                controller: {
+                    loadData: filter => ajax(filter, "GET", json = false),
+                    insertItem: item => ajax(item, "POST"),
+                    updateItem: item => ajax(item, "PUT"),
+                    deleteItem: item => ajax(item, "DELETE"),
+                },
+
+                fields: [
+                    { name: "id", type: "number", editing: false, inserting: false, visible: false},
+                    { name: "address", type: "text", title: "Address", align: "center"},
+                    { name: "city", type: "text", title: "City", align: "center"},
+                    { name: "postalCode", type: "text", title: "Postal Code", align: "center"},
+                    { type: "control" }
+                ]
+            });
+        });
+    </script>
+
+}

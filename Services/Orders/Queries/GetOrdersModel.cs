@@ -2,7 +2,7 @@
 
 namespace FoodDelivery.Controllers
 {
-    public class OrderRequestModel
+    public class GetOrdersModel
     {
         public int Id { get; set; }
 
@@ -16,7 +16,7 @@ namespace FoodDelivery.Controllers
 
         public string RiderName { get; set;}
 
-        public OrderRequestModel(int id, string date, int status, string userName, string restaurateurName, string riderName)
+        public GetOrdersModel(int id, string date, int status, string userName, string restaurateurName, string riderName)
         {
             Id = id; 
             Date = date;

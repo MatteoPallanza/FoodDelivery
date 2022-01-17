@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace FoodDelivery.Pages
+namespace FoodDelivery.Pages.Final
 {
     [Authorize]
     public class RequestUpgradeModel : PageModel

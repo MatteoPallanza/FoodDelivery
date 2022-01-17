@@ -1,6 +1,7 @@
 ﻿using FoodDelivery.Data;
 using FoodDelivery.Services.Orders.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace FoodDelivery.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         readonly IMediator _mediator;
@@ -20,7 +22,7 @@ namespace FoodDelivery.Controllers
         }
 
         [HttpGet]
-        public Task<List<OrderRequestModel>> Get(string userName, string userRole, int status) => _mediator.Send(new GetAllOrders() { UserName = userName, UserRole = userRole, Status = status });
+        public Task<List<GetOrdersModel>> Get(string userName, string userRole, int status) => _mediator.Send(new GetOrders() { UserName = userName, UserRole = userRole, Status = status });
 
     }
 }

@@ -1,4 +1,7 @@
 ﻿using FoodDelivery.Data;
+using FoodDelivery.Services.UserAddresses.Commands;
+using FoodDelivery.Services.UserAddresses.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -16,21 +19,52 @@ namespace FoodDelivery.Controllers
     [Authorize]
     public class UserAddressesController : ControllerBase
     {
-        readonly ApplicationDbContext _context;
-        readonly UserManager<ApplicationUser> _userManager;
+        readonly IMediator _mediator;
 
-        public UserAddressesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public UserAddressesController(IMediator mediator)
         {
-            _context = context;
-            _userManager = userManager;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<UserAddress>> Get()
-        {
-            var userId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+        public Task<List<GetUserAddressesModel>> Get(string userId) => _mediator.Send(new GetUserAddresses() { UserId = userId });
 
-            return await _context.UserAddresses.ToListAsync();
+        [HttpPost]
+        public async Task<ActionResult<UserAddress>> Post(string userId, UserAddress request)
+        {
+            return await _mediator.Send(new CreateUserAddress()
+            {
+                Address = request.Address,
+                City = request.City,
+                PostalCode = request.PostalCode,
+                UserId = userId
+            });
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<UserAddress>> Put(string userId, UserAddress request)
+        {
+            return await _mediator.Send(new UpdateUserAddress()
+            {
+                Id = request.Id,
+                Address = request.Address,
+                City = request.City,
+                PostalCode = request.PostalCode,
+                UserId = userId
+            });
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<UserAddress>> Delete(string userId, UserAddress request)
+        {
+            return await _mediator.Send(new DeleteUserAddress()
+            {
+                Id = request.Id,
+                Address = request.Address,
+                City = request.City,
+                PostalCode = request.PostalCode,
+                UserId = userId
+            });
         }
     }
 }

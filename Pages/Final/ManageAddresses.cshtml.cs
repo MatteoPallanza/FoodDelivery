@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 namespace FoodDelivery.Pages.Final
 {
     [Authorize]
-    public class OrdersModel : PageModel
+    public class ManageAddressesModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public OrdersModel(UserManager<ApplicationUser> userManager)
+        public ManageAddressesModel(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
 
-        public string UserName { get; set; }
+        public string UserId { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -27,7 +27,7 @@ namespace FoodDelivery.Pages.Final
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            UserName = user.UserName;
+            UserId = user.Id;
 
             return Page();
         }

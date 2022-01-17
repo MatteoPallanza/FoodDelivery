@@ -9,7 +9,7 @@ using FoodDelivery.Controllers;
 
 namespace FoodDelivery.Services.Orders.Queries
 {
-    public class GetAllOrders : IRequest<List<OrderRequestModel>>
+    public class GetOrders : IRequest<List<GetOrdersModel>>
     {
         public string UserName { get; init; }
 
@@ -18,16 +18,16 @@ namespace FoodDelivery.Services.Orders.Queries
         public int Status { get; init; }
     }
 
-    public class GetAllOrdersHandler : IRequestHandler<GetAllOrders, List<OrderRequestModel>>
+    public class GetOrdersHandler : IRequestHandler<GetOrders, List<GetOrdersModel>>
     {
         readonly ApplicationDbContext _context;
 
-        public GetAllOrdersHandler(ApplicationDbContext context)
+        public GetOrdersHandler(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public Task<List<OrderRequestModel>> Handle(GetAllOrders request, CancellationToken cancellationToken)
+        public Task<List<GetOrdersModel>> Handle(GetOrders request, CancellationToken cancellationToken)
         {
             if (request.UserName != null)
             {
@@ -44,7 +44,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                                  join rider in _context.Users on order.RiderId equals rider.Id
                                  where restaurateur.UserName == request.UserName && order.Status == request.Status
-                                 select new OrderRequestModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
+                                 select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
                         case "rider":
                             return
                                 (from order in _context.Orders
@@ -52,7 +52,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                                  join rider in _context.Users on order.RiderId equals rider.Id
                                  where rider.UserName == request.UserName && order.Status == request.Status
-                                 select new OrderRequestModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
+                                 select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
                         default:
                             return
                                 (from order in _context.Orders
@@ -60,7 +60,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                                  join rider in _context.Users on order.RiderId equals rider.Id
                                  where user.UserName == request.UserName && order.Status == request.Status
-                                 select new OrderRequestModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
+                                 select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
                     }
                 }
                 else
@@ -74,7 +74,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                                  join rider in _context.Users on order.RiderId equals rider.Id
                                  where restaurateur.UserName == request.UserName
-                                 select new OrderRequestModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
+                                 select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
                         case "rider":
                             return
                                 (from order in _context.Orders
@@ -82,7 +82,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                                  join rider in _context.Users on order.RiderId equals rider.Id
                                  where rider.UserName == request.UserName
-                                 select new OrderRequestModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
+                                 select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
                         default:
                             return
                                 (from order in _context.Orders
@@ -90,7 +90,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                                  join rider in _context.Users on order.RiderId equals rider.Id
                                  where user.UserName == request.UserName
-                                 select new OrderRequestModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
+                                 select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
                     }
                 }
             }
@@ -104,7 +104,7 @@ namespace FoodDelivery.Services.Orders.Queries
                          join user in _context.Users on order.UserId equals user.Id
                          join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                          join rider in _context.Users on order.RiderId equals rider.Id
-                         select new OrderRequestModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
+                         select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
                 }
                 else
                 {
@@ -113,7 +113,7 @@ namespace FoodDelivery.Services.Orders.Queries
                          join user in _context.Users on order.UserId equals user.Id
                          join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                          join rider in _context.Users on order.RiderId equals rider.Id
-                         select new OrderRequestModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
+                         select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, rider.UserName)).ToListAsync();
                 }
             }
         }

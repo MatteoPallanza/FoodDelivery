@@ -1,6 +1,13 @@
 ﻿@page
 @model FoodDelivery.Pages.Admin.IndexModel
 @{
+    ViewData["Title"] = "Admin Panel";
 }
 
-Admin Index
+<h4>@ViewData["Title"]</h4>
+<p>Welcome to the <strong>admin panel</strong>.<br />In this page you can manage the FoodDelivery app settings. Choose one of the following options:</p>
+<p><a class="btn btn-primary" role="button" asp-page="/Admin/Approve">Approve Upgrade Requests</a></p>
+<p><a class="btn btn-primary" role="button" asp-page="/Admin/UpdateRoles">Update Users Role</a></p>
+<p><a class="btn btn-primary" role="button" asp-page="/Admin/Block">Block Users</a></p>
+<p><a class="btn btn-primary" role="button" asp-page="/Admin/Orders">View Orders</a></p>
+<p><a class="btn btn-primary" role="button" asp-page="/Admin/RiderFee">Manage Rider Fee</a></p>

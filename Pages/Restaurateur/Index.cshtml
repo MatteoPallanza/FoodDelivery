@@ -1,5 +1,10 @@
 ﻿@page
 @model FoodDelivery.Pages.Restaurateur.IndexModel
 @{
+    ViewData["Title"] = "Restaurateur Panel";
 }
-Restaurateur Index
+
+<h4>@ViewData["Title"]</h4>
+<p>Welcome to the <strong>restaurateur panel</strong>.<br />In this page you can manage your products and view your orders. To edit your restaurateur info, visit the <a asp-area="Identity" asp-page="/Account/Manage/RestaurateurInfo">dedicated page</a> in your user area.<br />Choose one of the following options:</p>
+<p><a class="btn btn-primary" role="button" asp-page="/Restaurateur/Products">Manage Products</a></p>
+<p><a class="btn btn-primary" role="button" asp-page="/Restaurateur/Orders">View Orders</a></p>

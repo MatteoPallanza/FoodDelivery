@@ -1,5 +1,10 @@
 ﻿@page
 @model FoodDelivery.Pages.Rider.IndexModel
 @{
+    ViewData["Title"] = "Rider Panel";
 }
-Rider Index
+
+<h4>@ViewData["Title"]</h4>
+<p>Welcome to the <strong>rider panel</strong>.<br />In this page you can pick up an order and view your completed deliveries. To view your rider credit, visit the <a asp-area="Identity" asp-page="/Account/Manage/RiderInfo">dedicated page</a> in your user area.<br />Choose one of the following options:</p>
+<p><a class="btn btn-primary" role="button" asp-page="/Rider/OpenOrders">Pick Up Order</a></p>
+<p><a class="btn btn-primary" role="button" asp-page="/Rider/CompletedDeliveries">View Completed Deliveries</a></p>

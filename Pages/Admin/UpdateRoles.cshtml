@@ -1,13 +1,15 @@
 ﻿@page
-@model FoodDelivery.Pages.Admin.UpdateUserRoleModel
+@model FoodDelivery.Pages.Admin.UpdateRolesModel
 @{
     ViewData["Title"] = "Update User Role";
 }
 
 <h4>@ViewData["Title"]</h4>
 <p>In this page you can <strong>update</strong> any user role.</p>
+
 <partial name="_StatusMessage" model="Model.StatusMessage" />
-<form asp-page="UpdateUserRole">
+
+<form asp-page="UpdateRoles">
     <div class="form-group">
         <div class="form-group">
             <label asp-for="Input.UserName"></label>
@@ -19,7 +21,7 @@
             <select asp-for="Input.Role" asp-items="Model.Roles"></select>
             <span asp-validation-for="Input.Role"></span>
         </div>
-        <button type="submit" class="btn btn-primary">Update User Role</button>
+        <button type="submit" class="btn btn-primary">Update Role</button>
     </div>
 </form>
 

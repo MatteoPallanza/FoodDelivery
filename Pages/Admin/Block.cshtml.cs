@@ -12,12 +12,12 @@ using System;
 namespace FoodDelivery.Pages.Admin
 {
     [Authorize(Policy = PolicyName.IsAdmin)]
-    public class BlockUserModel : PageModel
+    public class BlockModel : PageModel
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public BlockUserModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public BlockModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;

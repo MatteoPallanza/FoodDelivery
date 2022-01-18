@@ -8,8 +8,5 @@ namespace FoodDelivery.Pages.Admin
     [Authorize(Policy = PolicyName.IsAdmin)]
     public class OrdersModel : PageModel
     {
-        public void OnGet()
-        {
-        }
     }
 }

@@ -40,22 +40,27 @@ namespace FoodDelivery.Areas.Identity.Pages.Account.Manage
         {
             [Display(Name = "Name")]
             [BindProperty]
+            [Required]
             public string Name { get; set; }
 
             [Display(Name = "Category")]
             [BindProperty]
+            [Required]
             public string Category { get; set; }
 
             [Display(Name = "Address")]
             [BindProperty]
+            [Required]
             public string Address { get; set; }
 
             [Display(Name = "City")]
             [BindProperty]
+            [Required]
             public string City { get; set; }
 
             [Display(Name = "Postal Code")]
             [BindProperty]
+            [Required]
             public string PostalCode { get; set; }
 
             [Display(Name = "Logo")]

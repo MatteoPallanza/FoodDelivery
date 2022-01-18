@@ -1,20 +1,22 @@
 ﻿@page
-@model FoodDelivery.Pages.Admin.BlockUserModel
+@model FoodDelivery.Pages.Admin.BlockModel
 @{
     ViewData["Title"] = "Block User";
 }
 
 <h4>@ViewData["Title"]</h4>
 <p>In this page you can <strong>block</strong> and <strong>unlock</strong> any user.</p>
+
 <partial name="_StatusMessage" model="Model.StatusMessage" />
-<form asp-page="BlockUser">
+
+<form asp-page="Block">
     <div class="form-group">
         <div class="form-group">
             <label asp-for="Input.UserName"></label>
             <input asp-for="Input.UserName" class="form-control" />
             <span asp-validation-for="Input.UserName" class="text-danger"></span>
         </div>
-        <button type="submit" class="btn btn-primary">Block/Unlock User</button>
+        <button type="submit" class="btn btn-primary">Block/Unlock</button>
     </div>
 </form>
 

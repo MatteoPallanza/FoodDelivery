@@ -18,7 +18,7 @@
 
 @section Scripts {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 
     <script>
         $(function () {
@@ -46,23 +46,23 @@
                 pageButtonCount: 5,
 
                 controller: {
-                    loadData: filter => ajax(filter, "GET", json = false),
+                    loadData: filter => ajax(filter, "GET", json = false)
                 },
 
                 fields: [
                     { name: "id", type: "number", title: "ID", align: "center", filtering: false},
                     { name: "date", type: "text", title: "Date", align: "center", filtering: false},
-                    { name: "status", type: "select", title: "Status", items: 
-                        [{"id":0, "name":"Tutti"},
-                        {"id":1,"name":"Carrello"},
-                        {"id":2,"name":"Inserito"},
-                        {"id":3,"name":"In carico"},
-                        {"id":4,"name":"Consegnato"}]
-                    , valueField: "id", textField: "name" },
+                    { name: "status", type: "select", title: "Status", items: [
+                        {"id":0, "name":"Tutti"},
+                        {"id":1, "name":"Carrello"},
+                        {"id":2, "name":"Inserito"},
+                        {"id":3, "name":"In carico"},
+                        {"id":4, "name":"Consegnato"}
+                    ], valueField: "id", textField: "name" },
                     { name: "userName", type: "text", title: "User", align: "center", filtering: false},
                     { name: "restaurateurName", type: "text", title: "Restaurateur", align: "center", filtering: false},
                     { name: "riderName", type: "text", title: "Rider", align: "center", filtering: false},
-                    { type: "control", editButton: false, deleteButton: false }
+                    { type: "control", editButton: false, deleteButton: false}
                 ]
             });
         });

@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 namespace FoodDelivery.Pages.Admin
 {
     [Authorize(Policy = PolicyName.IsAdmin)]
-    public class ApproveUpgradeRequestsModel : PageModel
+    public class ApproveModel : PageModel
     {
         private readonly ApplicationDbContext _context;
         readonly UserManager<ApplicationUser> _userManager;
 
-        public ApproveUpgradeRequestsModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ApproveModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -36,10 +36,6 @@ namespace FoodDelivery.Pages.Admin
             [BindProperty]
             [Required]
             public int RequestId { get; set; }
-        }
-
-        public void OnGet()
-        {
         }
 
         public async Task<IActionResult> OnPost()

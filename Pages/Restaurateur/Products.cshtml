@@ -18,7 +18,7 @@
 
 @section Scripts {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 
     <script>
         $(function () {
@@ -77,17 +77,17 @@
                     loadData: filter => ajax(filter, "GET", json = false),
                     insertItem: item => ajax(item, "POST"),
                     updateItem: item => ajax(item, "PUT"),
-                    deleteItem: item => ajax(item, "DELETE"),
+                    deleteItem: item => ajax(item, "DELETE")
                 },
 
                 fields: [
                     { name: "id", type: "number", editing: false, inserting: false, visible: false},
-                    { name: "name", type: "text", title: "Name", align: "center"},
-                    { name: "price", type: "decimal", title: "Price (€)", align: "center"},
+                    { name: "name", type: "text", title: "Name", align: "center", validate: "required"},
+                    { name: "price", type: "decimal", title: "Price (€)", align: "center", validate: "required"},
                     { name: "discount", type: "decimal", title: "Discount (€)", align: "center"},
                     //{ name: "picture", type: "text", title: "Picture", align: "center"},
-                    { name: "categoryId", type: "select", title: "Category", items: @(Html.Raw(Json.Serialize(Model.Categories))), valueField: "id", textField: "name" },
-                    { type: "control" }
+                    { name: "categoryId", type: "select", title: "Category", items: @(Html.Raw(Json.Serialize(Model.Categories))), valueField: "id", textField: "name"},
+                    { type: "control"}
                 ]
             });
         });

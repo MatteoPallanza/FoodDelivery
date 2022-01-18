@@ -15,12 +15,12 @@ using System.Text;
 namespace FoodDelivery.Pages.Admin
 {
     [Authorize(Policy=PolicyName.IsAdmin)]
-    public class UpdateUserRoleModel : PageModel
+    public class UpdateRolesModel : PageModel
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UpdateUserRoleModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public UpdateRolesModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;

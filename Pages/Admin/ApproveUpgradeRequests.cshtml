@@ -1,0 +1,76 @@
+﻿@page
+@model FoodDelivery.Pages.Admin.ApproveUpgradeRequestsModel
+@{
+    ViewData["Title"] = "Approve Upgrade Requests";
+}
+
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+        <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+    </head>
+    <body>
+        <h4>@ViewData["Title"]</h4>
+        <p>In this page you can <strong>approve upgrade requests</strong>.</p>
+        <partial name="_StatusMessage" model="Model.StatusMessage" />
+
+        <form id="review-form" method="post">
+            <div class="form-group">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Input.RequestId"></label>
+                    <input asp-for="Input.RequestId" class="form-control" />
+                    <span asp-validation-for="Input.RequestId" class="text-danger"></span>
+                </div>
+                <button id="update-restaurateur-button" type="submit" class="btn btn-primary">Approve</button>
+            </div>
+        </form>
+
+        <hr />
+        <h5>Pending requests</h5>
+        <div id="jsGrid"></div>
+    </body>
+</html>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+    <script>
+        $(function () {
+            const url = "/api/upgraderequests";
+
+            let ajax = function (item, verb, json = true) {
+                return $.ajax({
+                    type: verb,
+                    url: url,
+                    data: json ? JSON.stringify(item) : item,
+                    dataType: "json",
+                    contentType: json ? "application/json" : "text/plain",
+                });
+            }
+
+            $("#jsGrid").jsGrid({
+                width: "100%",
+                align: "center",
+
+                paging: true,
+                autoload: true,
+
+                pageSize: 15,
+                pageButtonCount: 5,
+
+                controller: {
+                    loadData: filter => ajax(filter, "GET", json = false)
+                },
+
+                fields: [
+                    { name: "id", type: "number", title: "Request ID", align: "center"},
+                    { name: "userName", type: "text", title: "User", align: "center"},
+                    { name: "role", type: "text", title: "Requested Role", align: "center"}
+                ]
+            });
+        });
+    </script>
+}

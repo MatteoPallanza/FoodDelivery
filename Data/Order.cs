@@ -18,11 +18,7 @@ namespace FoodDelivery.Data
 
         public int Status { get; set; }
 
-        public int Rating { get; set; }
-
-        public string ReviewTitle { get; set; }
-
-        public string Review { get; set; }
+        public Review Review { get; set; }
 
 
         public string UserId { get; set; }

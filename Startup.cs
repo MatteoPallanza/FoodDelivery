@@ -227,9 +227,9 @@ namespace FoodDelivery
                 if (!context.Orders.Any())
                 {
                     context.Orders.AddRange(new[] {
-                        new Order { Date = DateTime.Now, Rating = 0, Status = 3, RiderId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", RestaurateurId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355" },
-                        new Order { Date = DateTime.Now, Rating = 0, Status = 4, RiderId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", RestaurateurId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355" },
-                        new Order { Date = DateTime.Now, Rating = 0, Status = 4, RiderId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", RestaurateurId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355" },
+                        new Order { Date = DateTime.Now, Status = 3, RiderId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", RestaurateurId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355" },
+                        new Order { Date = DateTime.Now, Status = 4, RiderId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", RestaurateurId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355" },
+                        new Order { Date = DateTime.Now, Status = 4, RiderId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", RestaurateurId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355" },
                     });
                     context.SaveChanges();
                 }

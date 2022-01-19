@@ -20,6 +20,8 @@ namespace FoodDelivery.Data
 
         public Review Review { get; set; }
 
+        public string DeliveryAddress { get; set; }
+
 
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace FoodDelivery.Pages.Final
 {
     [Authorize]
-    public class ManageAddressesModel : PageModel
+    public class AddressesModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ManageAddressesModel(UserManager<ApplicationUser> userManager)
+        public AddressesModel(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }

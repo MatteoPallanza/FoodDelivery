@@ -1,22 +1,22 @@
 using FoodDelivery.Authorization;
 using FoodDelivery.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace FoodDelivery.Pages.Rider
 {
     [Authorize(Policy = PolicyName.IsRider)]
-    public class OpenOrdersModel : PageModel
+    public class DeliverModel : PageModel
     {
         private readonly ApplicationDbContext _context;
         readonly UserManager<ApplicationUser> _userManager;
 
-        public OpenOrdersModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public DeliverModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -34,6 +34,35 @@ namespace FoodDelivery.Pages.Rider
             [BindProperty]
             [Required]
             public int OrderId { get; set; }
+        }
+
+        public int OrderId { get; set; }
+
+        public string DeliveryAddress { get; set; }
+
+        private void Load(int orderId)
+        {
+            Input = new InputModel
+            {
+                OrderId = orderId
+            };
+        }
+
+        public IActionResult OnGet(int orderId)
+        {
+            OrderId = orderId;
+            var order =
+                (from o in _context.Orders
+                 where o.Id == OrderId
+                 select o).FirstOrDefault();
+
+            if (order != null)
+            {
+                DeliveryAddress = order.DeliveryAddress;
+            }
+
+            Load(orderId);
+            return Page();
         }
 
         public async Task<IActionResult> OnPost()
@@ -56,20 +85,16 @@ namespace FoodDelivery.Pages.Rider
                 return RedirectToPage();
             }
 
-            if (order.Status > 2)
+            if (order.Status > 3)
             {
-                StatusMessage = "Error: the order " + orderId + " has been already picked up.";
+                StatusMessage = "Error: the order " + orderId + " has been already delivered.";
                 return RedirectToPage();
             }
             else
             {
-                var user = await _userManager.GetUserAsync(User);
-                var riderId = user.Id;
-
-                order.Status = 3;
-                order.RiderId = riderId;
+                order.Status = 4;
                 await _context.SaveChangesAsync();
-                return RedirectToPage("Deliver", new { orderId });
+                return RedirectToPage("Delivered", new { orderId });
             }
         }
     }

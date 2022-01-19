@@ -3,3 +3,86 @@
 @{
     ViewData["Title"] = "Pick Up Order";
 }
+
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+        <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+    </head>
+    <body>
+        <h4>@ViewData["Title"]</h4>
+        <p>In this page you can <strong>pick up orders</strong>.</p>
+
+        <partial name="_StatusMessage" model="Model.StatusMessage" />
+
+        <form asp-page="OpenOrders">
+            <div class="form-group">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Input.OrderId"></label>
+                    <input asp-for="Input.OrderId" class="form-control" />
+                    <span asp-validation-for="Input.OrderId" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Pick Up</button>
+            </div>
+        </form>
+
+        <hr />
+
+        <h5>Open orders</h5>
+        <div id="jsGrid"></div>
+    </body>
+</html>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+    <script>
+        $(function () {
+            const url = "/api/orders?status=2";
+
+            let ajax = function (item, verb, json = true) {
+                return $.ajax({
+                    type: verb,
+                    url: url,
+                    data: json ? JSON.stringify(item) : item,
+                    dataType: "json",
+                    contentType: json ? "application/json" : "text/plain",
+                });
+            }
+
+            $("#jsGrid").jsGrid({
+                width: "100%",
+                align: "center",
+
+                paging: true,
+                autoload: true,
+
+                pageSize: 15,
+                pageButtonCount: 5,
+
+                controller: {
+                    loadData: filter => ajax(filter, "GET", json = false)
+                },
+
+                fields: [
+                    { name: "id", type: "number", title: "ID", align: "center"},
+                    { name: "date", type: "text", title: "Date", align: "center"},
+                    { name: "status", type: "select", title: "Status", items: [
+                        {"id":0, "name":"Tutti"},
+                        {"id":1, "name":"Carrello"},
+                        {"id":2, "name":"Inserito"},
+                        {"id":3, "name":"In carico"},
+                        {"id":4, "name":"Consegnato"}
+                    ], valueField: "id", textField: "name" },
+                    { name: "userName", type: "text", title: "User", align: "center"},
+                    { name: "restaurateurName", type: "text", title: "Restaurateur", align: "center"},
+                    { name: "riderName", type: "text", title: "Rider", align: "center"}
+                ]
+            });
+        });
+    </script>
+}

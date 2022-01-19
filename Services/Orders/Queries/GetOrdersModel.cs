@@ -16,7 +16,9 @@ namespace FoodDelivery.Controllers
 
         public string RiderName { get; set;}
 
-        public GetOrdersModel(int id, string date, int status, string userName, string restaurateurName, string riderName)
+        public string DeliveryAddress { get; set; }
+
+        public GetOrdersModel(int id, string date, int status, string userName, string restaurateurName, string riderName, string deliveryAddress)
         {
             Id = id; 
             Date = date;
@@ -24,6 +26,7 @@ namespace FoodDelivery.Controllers
             UserName = userName;
             RestaurateurName = restaurateurName;
             RiderName = riderName;
+            DeliveryAddress = deliveryAddress;
         }
     }
 }

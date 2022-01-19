@@ -23,6 +23,8 @@ namespace FoodDelivery.Data
 
         public DbSet<Order> Orders { get; set; }
 
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+
         public DbSet<Review> Reviews { get; set; }
 
         public DbSet<Product> Products { get; set; }
@@ -77,7 +79,6 @@ namespace FoodDelivery.Data
                 .WithOne(p => p.Order);
 
             modelBuilder.Entity<OrderDetail>().HasKey(c => new { c.OrderId, c.ProductId });
-            modelBuilder.Entity<OrderDetail>().ToTable("OrderDetails");
         }
     }
 }

@@ -5,7 +5,7 @@
 }
 
 <h4>@ViewData["Title"]</h4>
-<p>Welcome to the <strong>client panel</strong>.<br />In this page you manage your addresses, view your order history and place a new order.<br />
+<p>Welcome to the <strong>client panel</strong>.<br />In this page you manage your addresses, view your order history, place a new order and leave a review to completed orders.<br />
     @if (!( (HttpContext.User.HasClaim(c => c.Type == "Role" && c.Value == "Restaurateur")) || (HttpContext.User.HasClaim(c => c.Type == "Role" && c.Value == "Rider")) ))
     {
         <span>If you want to become a <strong>restaurateur</strong> or a <strong>rider</strong> you can <a asp-page="/Final/RequestUpgrade">request an upgrade</a>.<br /></span>
@@ -14,3 +14,4 @@
 <p><a class="btn btn-primary" role="button" asp-page="/Final/Addresses">Manage Addresses</a></p>
 <p><a class="btn btn-primary" role="button" asp-page="/Final/Orders">Order History</a></p>
 <p><a class="btn btn-primary" role="button" asp-page="/Final/FindRestaurant">Place New Order</a></p>
+<p><a class="btn btn-primary" role="button" asp-page="/Final/Reviews">Leave a Review</a></p>

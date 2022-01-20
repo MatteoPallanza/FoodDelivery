@@ -11,7 +11,7 @@
     </head>
     <body>
         <h4>@ViewData["Title"]</h4>
-        <p>In this page you can see all orders and filter them by <strong>status</strong>.</p>
+        <p>In this page you can see all the orders placed by users and filter them by <strong>status</strong>.</p>
         <div id="jsGrid"></div>
     </body>
 </html>
@@ -50,19 +50,17 @@
                 },
 
                 fields: [
-                    { name: "id", type: "number", title: "ID", align: "center", filtering: false},
-                    { name: "date", type: "text", title: "Date", align: "center", filtering: false},
+                    { name: "id", type: "number", width: 50, title: "ID", align: "center", filtering: false },
+                    { name: "date", type: "text", title: "Date", align: "center", filtering: false },
                     { name: "status", type: "select", title: "Status", items: [
                         {"id":0, "name":"Tutti"},
-                        {"id":1, "name":"Carrello"},
-                        {"id":2, "name":"Inserito"},
-                        {"id":3, "name":"In carico"},
-                        {"id":4, "name":"Consegnato"}
+                        {"id":1, "name":"Inserito"},
+                        {"id":2, "name":"Pagato"},
+                        {"id":3, "name":"In consegna"},
+                        {"id":4, "name":"Completato"}
                     ], valueField: "id", textField: "name" },
-                    { name: "userName", type: "text", title: "User", align: "center", filtering: false},
-                    { name: "restaurateurName", type: "text", title: "Restaurateur", align: "center", filtering: false},
-                    { name: "riderName", type: "text", title: "Rider", align: "center", filtering: false},
-                    { type: "control", editButton: false, deleteButton: false}
+                    { name: "userName", type: "text", title: "User", align: "center", filtering: false },
+                    { name: "riderName", type: "text", title: "Rider", align: "center", filtering: false }
                 ]
             });
         });

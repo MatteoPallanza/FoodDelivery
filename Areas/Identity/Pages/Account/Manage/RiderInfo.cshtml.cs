@@ -16,9 +16,7 @@ namespace FoodDelivery.Areas.Identity.Pages.Account.Manage
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public RiderInfoModel(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
+        public RiderInfoModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -58,7 +56,7 @@ namespace FoodDelivery.Areas.Identity.Pages.Account.Manage
             }
             else
             {
-                StatusMessage = "Unable to retrieve rider fee";
+                StatusMessage = "Error: unable to retrieve rider fee.";
                 credit = 0;
             }
 

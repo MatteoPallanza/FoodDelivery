@@ -19,6 +19,9 @@ namespace FoodDelivery.Pages.Admin
             _context = context;
         }
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
         [BindProperty]
         public InputModel Input { get; set; }
 
@@ -26,20 +29,19 @@ namespace FoodDelivery.Pages.Admin
         {
             [Display(Name = "Fee")]
             [BindProperty]
+            [Required]
             public decimal Fee { get; set; }
         }
 
-        private decimal PreviousFee { get; set; }
-
         private void Load()
         {
-            PreviousFee =
-                (from rf in _context.RiderFees
-                 select rf.Fee).FirstOrDefault();
+             var previousFee =
+                (from riderFee in _context.RiderFees
+                 select riderFee.Fee).FirstOrDefault();
 
             Input = new InputModel
             {
-                Fee = PreviousFee
+                Fee = previousFee
             };
         }
 
@@ -57,15 +59,25 @@ namespace FoodDelivery.Pages.Admin
                 return Page();
             }
 
-            if (Input.Fee != PreviousFee)
+            var previousFee =
+                (from riderFee in _context.RiderFees
+                 select riderFee.Fee).FirstOrDefault();
+
+            if (Input.Fee != previousFee)
             {
-                (from rf in _context.RiderFees
-                 select rf).FirstOrDefault().Fee = Input.Fee;
+               (from riderFee in _context.RiderFees
+                select riderFee).FirstOrDefault().Fee = Input.Fee;
+
+                await _context.SaveChangesAsync();
+
+                StatusMessage = "Success: the rider fee is now " + Input.Fee + ".";
+                return RedirectToPage();
             }
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage();
+            else
+            {
+                StatusMessage = "Success: the rider fee was already " + Input.Fee + ".";
+                return RedirectToPage();
+            }
         }
     }
 }

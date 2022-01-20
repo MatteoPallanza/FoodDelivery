@@ -36,8 +36,6 @@ namespace FoodDelivery.Pages.Rider
             public int OrderId { get; set; }
         }
 
-        public int OrderId { get; set; }
-
         public string DeliveryAddress { get; set; }
 
         private void Load(int orderId)
@@ -50,19 +48,24 @@ namespace FoodDelivery.Pages.Rider
 
         public IActionResult OnGet(int orderId)
         {
-            OrderId = orderId;
             var order =
                 (from o in _context.Orders
-                 where o.Id == OrderId
+                 where o.Id == orderId && o.Status < 4
                  select o).FirstOrDefault();
 
-            if (order != null)
+            var userId = _userManager.GetUserId(User);
+
+            // per evitare che altri rider vedano il percorso di un ordine altrui o di ordini completati
+            if ((order == null) || (userId != order.RiderId))
+            {
+                return NotFound("Error: no order exists with the defined ID, the order has already been marked as delivered or you aren't allowed to access this page.");
+            }
+            else
             {
                 DeliveryAddress = order.DeliveryAddress;
+                Load(orderId);
+                return Page();
             }
-
-            Load(orderId);
-            return Page();
         }
 
         public async Task<IActionResult> OnPost()
@@ -72,29 +75,34 @@ namespace FoodDelivery.Pages.Rider
                 return Page();
             }
 
-            var orderId = Input.OrderId;
-
             var order =
                 (from o in _context.Orders
-                 where o.Id == orderId
+                 where o.Id == Input.OrderId
                  select o).FirstOrDefault();
 
             if (order == null)
             {
                 StatusMessage = "Error: no order exists with the defined ID.";
-                return RedirectToPage();
+                return RedirectToPage(new { orderId = Input.OrderId });
+            }
+
+            // per evitare che altri rider contrassegnino come consegnato un ordine altrui
+            var userId = _userManager.GetUserId(User);
+            if (userId != order.RiderId)
+            {
+                return NotFound("Error: you aren't allowed to access this page.");
             }
 
             if (order.Status > 3)
             {
-                StatusMessage = "Error: the order " + orderId + " has been already delivered.";
-                return RedirectToPage();
+                StatusMessage = "Error: the order " + Input.OrderId + " has already been marked as delivered.";
+                return RedirectToPage(new { orderId = Input.OrderId });
             }
             else
             {
                 order.Status = 4;
                 await _context.SaveChangesAsync();
-                return RedirectToPage("Delivered", new { orderId });
+                return RedirectToPage("Delivered", new { orderId = Input.OrderId });
             }
         }
     }

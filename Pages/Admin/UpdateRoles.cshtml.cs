@@ -44,23 +44,23 @@ namespace FoodDelivery.Pages.Admin
         {
             [Display(Name = "Username")]
             [BindProperty]
+            [Required]
             public string UserName { get; set; }
 
             [Display(Name = "Role")]
             [BindProperty]
+            [Required]
             public string Role { get; set; }
         }
 
-        public void OnGet()
+        public async Task<IActionResult> OnPostAsync()
         {
-        }
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
 
-        public async Task<IActionResult> OnPost()
-        {
-            var userName = Input.UserName ?? "";
-            var role = Input.Role;
-
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(Input.UserName ?? "");
 
             if (user == null)
             {
@@ -69,24 +69,24 @@ namespace FoodDelivery.Pages.Admin
             }
 
             var userClaims=
-                from uc in _context.UserClaims
-                where uc.UserId == user.Id
-                select uc.ClaimValue;
+                from claim in _context.UserClaims
+                where claim.UserId == user.Id
+                select claim.ClaimValue;
 
-            if (role == "final")
+            if (Input.Role == "final")
             {
                 var allUserClaims = await _userManager.GetClaimsAsync(user);
                 await _userManager.RemoveClaimsAsync(user, allUserClaims);
 
-                StatusMessage = "Success: user " + userName + " is now a final user.";
+                StatusMessage = "Success: user " + Input.UserName + " is now a final user.";
                 return RedirectToPage();
             }
 
-            if (role == "restaurateur")
+            if (Input.Role == "restaurateur")
             {
                 if (userClaims.Contains(RoleName.Restaurateur))
                 {
-                    StatusMessage = "Success: user " + userName + " is already a restaurateur.";
+                    StatusMessage = "Success: user " + Input.UserName + " is already a restaurateur.";
                     return RedirectToPage();
                 }
 
@@ -95,21 +95,21 @@ namespace FoodDelivery.Pages.Admin
                     await _userManager.RemoveClaimAsync(user, new Claim(ClaimName.Role, RoleName.Rider));
                     await _userManager.AddClaimAsync(user, new Claim(ClaimName.Role, RoleName.Restaurateur));
 
-                    StatusMessage = "Success: user " + userName + " was a rider, now is a restaurateur.";
+                    StatusMessage = "Success: user " + Input.UserName + " was a rider, now is a restaurateur.";
                     return RedirectToPage();
                 }
 
                 await _userManager.AddClaimAsync(user, new Claim(ClaimName.Role, RoleName.Restaurateur));
 
-                StatusMessage = "Success: user " + userName + " is now a restaurateur.";
+                StatusMessage = "Success: user " + Input.UserName + " is now a restaurateur.";
                 return RedirectToPage();
             }
 
-            if (role == "rider")
+            if (Input.Role == "rider")
             {
                 if (userClaims.Contains(RoleName.Rider))
                 {
-                    StatusMessage = "Success: user " + userName + " is already a rider.";
+                    StatusMessage = "Success: user " + Input.UserName + " is already a rider.";
                     return RedirectToPage();
                 }
 
@@ -118,27 +118,27 @@ namespace FoodDelivery.Pages.Admin
                     await _userManager.RemoveClaimAsync(user, new Claim(ClaimName.Role, RoleName.Restaurateur));
                     await _userManager.AddClaimAsync(user, new Claim(ClaimName.Role, RoleName.Rider));
 
-                    StatusMessage = "Success: user " + userName + " was a restaurateur, now is a rider.";
+                    StatusMessage = "Success: user " + Input.UserName + " was a restaurateur, now is a rider.";
                     return RedirectToPage();
                 }
 
                 await _userManager.AddClaimAsync(user, new Claim(ClaimName.Role, RoleName.Rider));
 
-                StatusMessage = "Success: user " + userName + " is now a rider.";
+                StatusMessage = "Success: user " + Input.UserName + " is now a rider.";
                 return RedirectToPage();
             }
 
-            if (role == "admin")
+            if (Input.Role == "admin")
             {
                 if (userClaims.Contains(RoleName.Admin))
                 {
-                    StatusMessage = "Success: user " + userName + " is already an admin.";
+                    StatusMessage = "Success: user " + Input.UserName + " is already an admin.";
                     return RedirectToPage();
                 }
 
                 await _userManager.AddClaimAsync(user, new Claim(ClaimName.Role, RoleName.Admin));
 
-                StatusMessage = "Success: user " + userName + " is an admin.";
+                StatusMessage = "Success: user " + Input.UserName + " is an admin.";
                 return RedirectToPage();
             }
 

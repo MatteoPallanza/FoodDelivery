@@ -33,18 +33,18 @@ namespace FoodDelivery.Pages.Admin
         {
             [Display(Name = "Username")]
             [BindProperty]
+            [Required]
             public string UserName { get; set; }
         }
 
-        public void OnGet()
+        public async Task<IActionResult> OnPostAsync()
         {
-        }
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
 
-        public async Task<IActionResult> OnPost()
-        {
-            var userName = Input.UserName ?? "";
-
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(Input.UserName ?? "");
 
             if (user == null)
             {
@@ -53,13 +53,13 @@ namespace FoodDelivery.Pages.Admin
             }
 
             var userClaims =
-                from uc in _context.UserClaims
-                where uc.UserId == user.Id
-                select uc.ClaimValue;
+                from claim in _context.UserClaims
+                where claim.UserId == user.Id
+                select claim.ClaimValue;
 
             if (userClaims.Contains(RoleName.Admin))
             {
-                StatusMessage = "Error: " + userName + " is an admin.";
+                StatusMessage = "Error: " + Input.UserName + " is an admin.";
                 return RedirectToPage();
             }
 
@@ -68,13 +68,13 @@ namespace FoodDelivery.Pages.Admin
             if (userLockEnd != null)
             {
                 await _userManager.SetLockoutEndDateAsync(user, null);
-                StatusMessage = "Success: " + userName + " is now unlocked.";
+                StatusMessage = "Success: " + Input.UserName + " is now unlocked.";
                 return RedirectToPage();
             }
             else
             {
                 await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.Now.AddYears(200));
-                StatusMessage = "Success: " + userName + " is now blocked.";
+                StatusMessage = "Success: " + Input.UserName + " is now blocked.";
                 return RedirectToPage();
             }
         }

@@ -81,16 +81,14 @@
                 },
 
                 fields: [
-                    { name: "id", type: "number", editing: false, inserting: false, visible: false},
-                    { name: "name", type: "text", title: "Name", align: "center", validate: "required"},
-                    { name: "price", type: "decimal", title: "Price (€)", align: "center", validate: "required"},
-                    { name: "discount", type: "decimal", title: "Discount (€)", align: "center"},
-                    //{ name: "picture", type: "text", title: "Picture", align: "center"},
-                    { name: "categoryId", type: "select", title: "Category", items: @(Html.Raw(Json.Serialize(Model.Categories))), valueField: "id", textField: "name"},
-                    { type: "control"}
+                    { name: "id", type: "number", editing: false, inserting: false, visible: false },
+                    { name: "name", type: "text", title: "Name", align: "center", validate: "required" },
+                    { name: "price", type: "decimal", title: "Price", align: "center", validate: "required" },
+                    { name: "discount", type: "decimal", title: "Discount", align: "center" },
+                    { name: "categoryId", type: "select", title: "Category", items: @(Html.Raw(Json.Serialize(Model.Categories))), valueField: "id", textField: "name" },
+                    { type: "control" }
                 ]
             });
         });
     </script>
-
 }

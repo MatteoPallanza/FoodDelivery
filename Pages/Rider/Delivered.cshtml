@@ -1,8 +1,9 @@
 ﻿@page
 @model FoodDelivery.Pages.Rider.DeliveredModel
 @{
+    ViewData["Title"] = "Order Delivered";
 }
 
+<h4>@ViewData["Title"]</h4>
 <p>Order @Model.OrderId has been marked as delivered.</p>
-
 <p><a class="btn btn-primary" role="button" asp-page="/Rider/OpenOrders">Pick Up another Order</a></p>

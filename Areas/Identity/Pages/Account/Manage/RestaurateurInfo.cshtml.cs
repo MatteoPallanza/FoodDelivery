@@ -20,9 +20,7 @@ namespace FoodDelivery.Areas.Identity.Pages.Account.Manage
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public RestaurateurInfoModel(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
+        public RestaurateurInfoModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context; 
             _userManager = userManager;
@@ -71,14 +69,15 @@ namespace FoodDelivery.Areas.Identity.Pages.Account.Manage
         private async Task LoadAsync(ApplicationUser user)
         {
             var userId = await _userManager.GetUserIdAsync(user);
+
             var restaurateur = 
                 (from r in _context.Restaurateurs
                 where r.UserId == userId
                 select r).FirstOrDefault();
 
             var categoriesList =
-                from cat in _context.RestaurateurCategories
-                select cat;
+                from c in _context.RestaurateurCategories
+                select c;
 
             foreach (var category in categoriesList)
             {
@@ -148,7 +147,7 @@ namespace FoodDelivery.Areas.Identity.Pages.Account.Manage
             if (restaurateur == null)
             {
                 restaurateur = new Restaurateur { UserId = userId };
-                _context.Restaurateurs.AddRange(restaurateur);
+                _context.Restaurateurs.Add(restaurateur);
             }
 
             if (Input.Name != restaurateur.Name)
@@ -182,7 +181,7 @@ namespace FoodDelivery.Areas.Identity.Pages.Account.Manage
                 }
                 else
                 {
-                    StatusMessage = "Unexpected error when trying to set category.";
+                    StatusMessage = "Error: Unexpected error when trying to set category.";
                     return RedirectToPage();
                 }
             }
@@ -199,7 +198,7 @@ namespace FoodDelivery.Areas.Identity.Pages.Account.Manage
             
             await _context.SaveChangesAsync();
 
-            StatusMessage = "Your restaurateur profile has been updated";
+            StatusMessage = "Success: Your restaurateur profile has been saved.";
             return RedirectToPage();
         }
     }

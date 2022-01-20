@@ -40,13 +40,16 @@ namespace FoodDelivery.Pages.Admin
 
         public async Task<IActionResult> OnPost()
         {
-            var requestId = Input.RequestId;
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
 
             var requestDetails =
-                (from req in _context.UpgradeRequests
-                 join us in _context.Users on req.UserId equals us.Id
-                 where req.Id == requestId
-                 select new { UserName = us.UserName, Role = req.Role }).FirstOrDefault();
+                (from request in _context.UpgradeRequests
+                 join usr in _context.Users on request.UserId equals usr.Id
+                 where request.Id == Input.RequestId
+                 select new { UserName = usr.UserName, Role = request.Role }).FirstOrDefault();
 
             if (requestDetails == null)
             {
@@ -54,10 +57,7 @@ namespace FoodDelivery.Pages.Admin
                 return RedirectToPage();
             }
 
-            var userName = requestDetails.UserName;
-            var role = requestDetails.Role;
-
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(requestDetails.UserName);
 
             if (user == null)
             {
@@ -66,23 +66,23 @@ namespace FoodDelivery.Pages.Admin
             }
 
             var userClaims =
-                from uc in _context.UserClaims
-                where uc.UserId == user.Id
-                select uc.ClaimValue;
+                from claim in _context.UserClaims
+                where claim.UserId == user.Id
+                select claim.ClaimValue;
 
             var requestToDelete =
                 (from req in _context.UpgradeRequests
-                 where req.Id == requestId
+                 where req.Id == Input.RequestId
                  select req).FirstOrDefault();
 
             _context.Entry(requestToDelete).State = EntityState.Deleted;
             await _context.SaveChangesAsync();
 
-            if (role == "restaurateur")
+            if (requestDetails.Role == "restaurateur")
             {
                 if (userClaims.Contains(RoleName.Restaurateur))
                 {
-                    StatusMessage = "Success: user " + userName + " is already a restaurateur.";
+                    StatusMessage = "Success: user " + requestDetails.UserName + " is already a restaurateur.";
                     return RedirectToPage();
                 }
 
@@ -91,21 +91,21 @@ namespace FoodDelivery.Pages.Admin
                     await _userManager.RemoveClaimAsync(user, new Claim(ClaimName.Role, RoleName.Rider));
                     await _userManager.AddClaimAsync(user, new Claim(ClaimName.Role, RoleName.Restaurateur));
 
-                    StatusMessage = "Success: user " + userName + " was a rider, now is a restaurateur.";
+                    StatusMessage = "Success: user " + requestDetails.UserName + " was a rider, now is a restaurateur.";
                     return RedirectToPage();
                 }
 
                 await _userManager.AddClaimAsync(user, new Claim(ClaimName.Role, RoleName.Restaurateur));
 
-                StatusMessage = "Success: user " + userName + " is now a restaurateur.";
+                StatusMessage = "Success: user " + requestDetails.UserName + " is now a restaurateur.";
                 return RedirectToPage();
             }
 
-            if (role == "rider")
+            if (requestDetails.Role == "rider")
             {
                 if (userClaims.Contains(RoleName.Rider))
                 {
-                    StatusMessage = "Success: user " + userName + " is already a rider.";
+                    StatusMessage = "Success: user " + requestDetails.UserName + " is already a rider.";
                     return RedirectToPage();
                 }
 
@@ -114,13 +114,13 @@ namespace FoodDelivery.Pages.Admin
                     await _userManager.RemoveClaimAsync(user, new Claim(ClaimName.Role, RoleName.Restaurateur));
                     await _userManager.AddClaimAsync(user, new Claim(ClaimName.Role, RoleName.Rider));
 
-                    StatusMessage = "Success: user " + userName + " was a restaurateur, now is a rider.";
+                    StatusMessage = "Success: user " + requestDetails.UserName + " was a restaurateur, now is a rider.";
                     return RedirectToPage();
                 }
 
                 await _userManager.AddClaimAsync(user, new Claim(ClaimName.Role, RoleName.Rider));
 
-                StatusMessage = "Success: user " + userName + " is now a rider.";
+                StatusMessage = "Success: user " + requestDetails.UserName + " is now a rider.";
                 return RedirectToPage();
             }
 

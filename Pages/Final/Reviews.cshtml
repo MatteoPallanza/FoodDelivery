@@ -12,19 +12,20 @@
     <body>
         <h4>@ViewData["Title"]</h4>
         <p>In this page you can leave <strong>reviews</strong> to your completed orders.</p>
+
         <partial name="_StatusMessage" model="Model.StatusMessage" />
 
-        <form id="review-form" method="post">
+        <form asp-page="Reviews">
             <div class="form-group">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Input.OrderId"></label>
-                    <select asp-for="Input.OrderId" asp-items="Model.OrderIds"></select>
+                    <select asp-for="Input.OrderId" asp-items="Model.OrderIds" class="form-control"></select>
                     <span asp-validation-for="Input.OrderId"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.Rating"></label>
-                    <select asp-for="Input.Rating" asp-items="Model.Ratings"></select>
+                    <select asp-for="Input.Rating" asp-items="Model.Ratings" class="form-control"></select>
                     <span asp-validation-for="Input.Rating"></span>
                 </div>
                 <div class="form-group">
@@ -37,20 +38,21 @@
                     <textarea asp-for="Input.ReviewText" class="form-control"></textarea>
                     <span asp-validation-for="Input.ReviewText" class="text-danger"></span>
                 </div>
-                <button id="update-restaurateur-button" type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </form>
 
         <hr />
-        <h5>Your previous reviews</h5>
+        <h5>Your reviews</h5>
         <div id="jsGrid"></div>
     </body>
 </html>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 
     <script>
         $(function () {
@@ -81,10 +83,10 @@
                 },
 
                 fields: [
-                    { name: "orderId", type: "number", title: "Order"},
-                    { name: "date", type: "text", title: "Date", align: "center"},
-                    { name: "restaurateurName", type: "text", title: "Restaurateur", align: "center"},
-                    { name: "riderName", type: "text", title: "Rider", align: "center"},
+                    { name: "orderId", type: "number", title: "Order ID" },
+                    { name: "date", type: "text", title: "Order Date", align: "center" },
+                    { name: "restaurateurName", type: "text", title: "Restaurateur", align: "center" },
+                    { name: "riderName", type: "text", title: "Rider", align: "center" },
                     { name: "rating", type: "select", title: "Rating", items: [
                         {"id":0,"name":""},
                         {"id":1,"name":"1 Star"},
@@ -93,8 +95,8 @@
                         {"id":4,"name":"4 Stars"},
                         {"id":5,"name":"5 Stars"}
                     ], valueField: "id", textField: "name" },
-                    { name: "reviewTitle", type: "text", title: "Title", align: "center"},
-                    { name: "reviewText", type: "textarea", title: "Review", align: "left"}
+                    { name: "reviewTitle", type: "text", title: "Title", align: "center" },
+                    { name: "reviewText", type: "textarea", title: "Review", align: "left" }
                 ]
             });
         });

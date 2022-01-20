@@ -15,13 +15,13 @@ namespace FoodDelivery.Pages.Final
     [Authorize]
     public class ReviewsModel : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
-
-        public ReviewsModel(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        
+        public ReviewsModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            _userManager = userManager;
             _context = context;
+            _userManager = userManager;
         }
 
         public IEnumerable<SelectListItem> Ratings = new[]
@@ -70,7 +70,7 @@ namespace FoodDelivery.Pages.Final
         {
             var completedOrders =
                 (from o in _context.Orders
-                 where o.UserId == UserId && o.Status == 4
+                 where o.UserId == user.Id && o.Status == 4
                  select o.Id);
 
             foreach (var order in completedOrders)
@@ -123,12 +123,12 @@ namespace FoodDelivery.Pages.Final
             if (!alreadyReviewed)
             {
                 _context.Reviews.Add(review);
-                StatusMessage = $"Your review for order {Input.OrderId} has been saved";
+                StatusMessage = "Success: your review for order " + Input.OrderId + " has been saved.";
             }
             else
             {
                 _context.Entry(review).State = EntityState.Modified;
-                StatusMessage = $"Your review for order {Input.OrderId} has been updated";
+                StatusMessage = "Success: your review for order " + Input.OrderId + " has been updated.";
             }
 
             await _context.SaveChangesAsync();

@@ -3,13 +3,20 @@
 @{
 }
 <p>In this page you can request to become a <strong>Restaurateur</strong> or a <strong>Rider</strong>. An administrator will check your request as soon as possible.</p>
+
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
 <form asp-page="RequestUpgrade">
     <div class="form-group">
         <div class="form-group">
-            <label asp-for="Role"></label>
-            <select asp-for="Role" asp-items="Model.Roles"></select>
-            <span asp-validation-for="Role"></span>
+            <label asp-for="Input.Role"></label>
+            <select asp-for="Input.Role" asp-items="Model.Roles" class="form-control"></select>
+            <span asp-validation-for="Input.Role"></span>
         </div>
         <button type="submit" class="btn btn-primary">Request Upgrade</button>
     </div>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

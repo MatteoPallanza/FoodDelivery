@@ -22,36 +22,44 @@ namespace FoodDelivery.Pages.Final
             _userManager = userManager;
         }
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
         public IEnumerable<SelectListItem> Roles = new[]
         {
             new SelectListItem("Restaurateur", "restaurateur"),
             new SelectListItem("Rider", "rider")
         };
 
-        [Display(Name = "Role")]
         [BindProperty]
-        public string Role { get; set; }
+        public InputModel Input { get; set; }
 
-        public void OnGet()
+        public class InputModel
         {
+            [Display(Name = "Role")]
+            [BindProperty]
+            [Required]
+            public string Role { get; set; }
         }
 
         public async Task<IActionResult> OnPost()
         {
-            ApplicationUser applicationUser = await _userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-
-                _context.UpgradeRequests.Add(new UpgradeRequest
-                {
-                    Role = Role,
-                    User = applicationUser
-                });
-
-                await _context.SaveChangesAsync();
+                return Page();
             }
 
+            _context.UpgradeRequests.Add(new UpgradeRequest
+            {
+                Role = Input.Role,
+                User = user
+            });
+
+            await _context.SaveChangesAsync();
+
+            StatusMessage = "Success: your request has been saved.";
             return RedirectToPage();
         }
     }

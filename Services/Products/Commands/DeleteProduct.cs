@@ -1,4 +1,5 @@
-﻿using FoodDelivery.Data;
+﻿using AutoMapper;
+using FoodDelivery.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -13,23 +14,17 @@ namespace FoodDelivery.Services.Products.Commands
     public class DeleteProductHandler : IRequestHandler<DeleteProduct, Product>
     {
         readonly ApplicationDbContext _context;
+        readonly IMapper _mapper;
 
-        public DeleteProductHandler(ApplicationDbContext context)
+        public DeleteProductHandler(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<Product> Handle(DeleteProduct request, CancellationToken cancellationToken)
         {
-            var product = new Product
-            {
-                Id = request.Id,
-                Name = request.Name,
-                Price = request.Price,
-                Discount = request.Discount,
-                CategoryId = request.CategoryId,
-                UserId = request.UserId
-            };
+            var product = _mapper.Map<Product>(request);
 
             _context.Entry(product).State = EntityState.Deleted;
             await _context.SaveChangesAsync();

@@ -1,4 +1,5 @@
-﻿using FoodDelivery.Data;
+﻿using AutoMapper;
+using FoodDelivery.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -13,22 +14,17 @@ namespace FoodDelivery.Services.UserAddresses.Commands
     public class UpdateUserAddressHandler : IRequestHandler<UpdateUserAddress, UserAddress>
     {
         readonly ApplicationDbContext _context;
+        readonly IMapper _mapper;
 
-        public UpdateUserAddressHandler(ApplicationDbContext context)
+        public UpdateUserAddressHandler(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<UserAddress> Handle(UpdateUserAddress request, CancellationToken cancellationToken)
         {
-            var address = new UserAddress
-            {
-                Id = request.Id,
-                Address = request.Address,
-                City = request.City,
-                PostalCode = request.PostalCode,
-                UserId = request.UserId
-            };
+            var address = _mapper.Map<UserAddress>(request);
 
             _context.Entry(address).State = EntityState.Modified;
             await _context.SaveChangesAsync();

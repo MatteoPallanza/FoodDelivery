@@ -1,4 +1,5 @@
-﻿using FoodDelivery.Data;
+﻿using AutoMapper;
+using FoodDelivery.Data;
 using FoodDelivery.Services.UserAddresses.Commands;
 using FoodDelivery.Services.UserAddresses.Queries;
 using MediatR;
@@ -20,10 +21,12 @@ namespace FoodDelivery.Controllers
     public class UserAddressesController : ControllerBase
     {
         readonly IMediator _mediator;
+        readonly IMapper _mapper;
 
-        public UserAddressesController(IMediator mediator)
+        public UserAddressesController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -32,39 +35,22 @@ namespace FoodDelivery.Controllers
         [HttpPost]
         public async Task<ActionResult<UserAddress>> Post(string userId, UserAddress request)
         {
-            return await _mediator.Send(new CreateUserAddress()
-            {
-                Address = request.Address,
-                City = request.City,
-                PostalCode = request.PostalCode,
-                UserId = userId
-            });
+            request.UserId = userId;
+            return await _mediator.Send(_mapper.Map<CreateUserAddress>(request));
         }
 
         [HttpPut]
         public async Task<ActionResult<UserAddress>> Put(string userId, UserAddress request)
         {
-            return await _mediator.Send(new UpdateUserAddress()
-            {
-                Id = request.Id,
-                Address = request.Address,
-                City = request.City,
-                PostalCode = request.PostalCode,
-                UserId = userId
-            });
+            request.UserId = userId;
+            return await _mediator.Send(_mapper.Map<UpdateUserAddress>(request));
         }
 
         [HttpDelete]
         public async Task<ActionResult<UserAddress>> Delete(string userId, UserAddress request)
         {
-            return await _mediator.Send(new DeleteUserAddress()
-            {
-                Id = request.Id,
-                Address = request.Address,
-                City = request.City,
-                PostalCode = request.PostalCode,
-                UserId = userId
-            });
+            request.UserId = userId;
+            return await _mediator.Send(_mapper.Map<DeleteUserAddress>(request));
         }
     }
 }

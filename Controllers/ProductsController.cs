@@ -1,4 +1,5 @@
-﻿using FoodDelivery.Data;
+﻿using AutoMapper;
+using FoodDelivery.Data;
 using FoodDelivery.Services.Products.Commands;
 using FoodDelivery.Services.Products.Queries;
 using MediatR;
@@ -16,10 +17,12 @@ namespace FoodDelivery.Controllers
     public class ProductsController : ControllerBase
     {
         readonly IMediator _mediator;
+        readonly IMapper _mapper;
 
-        public ProductsController(IMediator mediator)
+        public ProductsController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,42 +31,22 @@ namespace FoodDelivery.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> Post(string userId, Product request)
         {
-            return await _mediator.Send(new CreateProduct()
-            {
-                Name = request.Name,
-                Price = request.Price,
-                Discount = request.Discount,
-                CategoryId = request.CategoryId,
-                UserId = userId
-            });
+            request.UserId = userId;
+            return await _mediator.Send(_mapper.Map<CreateProduct>(request));
         }
 
         [HttpPut]
         public async Task<ActionResult<Product>> Put(string userId, Product request)
         {
-            return await _mediator.Send(new UpdateProduct()
-            {
-                Id = request.Id,
-                Name = request.Name,
-                Price = request.Price,
-                Discount = request.Discount,
-                CategoryId = request.CategoryId,
-                UserId = userId
-            });
+            request.UserId = userId;
+            return await _mediator.Send(_mapper.Map<UpdateProduct>(request));
         }
 
         [HttpDelete]
         public async Task<ActionResult<Product>> Delete(string userId, Product request)
         {
-            return await _mediator.Send(new DeleteProduct()
-            {
-                Id = request.Id,
-                Name = request.Name,
-                Price = request.Price,
-                Discount = request.Discount,
-                CategoryId = request.CategoryId,
-                UserId = userId
-            });
+            request.UserId = userId;
+            return await _mediator.Send(_mapper.Map<DeleteProduct>(request));
         }
 
     }

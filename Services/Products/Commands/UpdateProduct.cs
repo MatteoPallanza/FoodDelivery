@@ -1,4 +1,5 @@
-﻿using FoodDelivery.Data;
+﻿using AutoMapper;
+using FoodDelivery.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -13,23 +14,17 @@ namespace FoodDelivery.Services.Products.Commands
     public class UpdateProductHandler : IRequestHandler<UpdateProduct, Product>
     {
         readonly ApplicationDbContext _context;
+        readonly IMapper _mapper;
 
-        public UpdateProductHandler(ApplicationDbContext context)
+        public UpdateProductHandler(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<Product> Handle(UpdateProduct request, CancellationToken cancellationToken)
         {
-            var product = new Product
-            {
-                Id = request.Id,
-                Name = request.Name,
-                Price = request.Price,
-                Discount = request.Discount,
-                CategoryId = request.CategoryId,
-                UserId = request.UserId
-            };
+            var product = _mapper.Map<Product>(request);
 
             _context.Entry(product).State = EntityState.Modified;
             await _context.SaveChangesAsync();

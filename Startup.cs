@@ -24,6 +24,8 @@ using MediatR;
 using System.Reflection;
 using AutoMapper;
 using FoodDelivery.Map;
+using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Http;
 
 namespace FoodDelivery
 {
@@ -51,6 +53,8 @@ namespace FoodDelivery
                     options.User.RequireUniqueEmail = true;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddProblemDetails();
 
             services.AddSwaggerGen(c =>
             {
@@ -121,7 +125,15 @@ namespace FoodDelivery
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseWhen(context => context.IsApiRequest(), branch =>
+                {
+                    branch.UseProblemDetails();
+                });
+
+                app.UseWhen(context => !context.IsApiRequest(), branch =>
+                {
+                    branch.UseDeveloperExceptionPage();
+                });
                 app.UseMigrationsEndPoint();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FoodDelivery"));
@@ -234,6 +246,15 @@ namespace FoodDelivery
                     context.SaveChanges();
                 }
             }
+        }
+    }
+
+    public static class HttpContextExtensions
+    {
+        public static bool IsApiRequest(this HttpContext context)
+        {
+            return context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase)
+                || (context.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
         }
     }
 }

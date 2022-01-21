@@ -32,6 +32,7 @@ namespace FoodDelivery.Services.Reviews.Queries
                      join restaurateur in _context.Users on o.RestaurateurId equals restaurateur.Id
                      join rider in _context.Users on o.RiderId equals rider.Id
                      join review in _context.Reviews on o.Id equals review.OrderId
+                     orderby o.Date descending
                      select new GetReviewsModel(o.Id, o.Date.ToString("dd/MM/yyyy HH:mm"), restaurateur.UserName, rider.UserName, review.Rating, review.ReviewTitle, review.ReviewText)).ToListAsync();
             }
             else

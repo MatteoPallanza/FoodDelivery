@@ -45,6 +45,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join rider in _context.Users on order.RiderId equals rider.Id into leftRiderJoin
                                  from element in leftRiderJoin.DefaultIfEmpty()
                                  where restaurateur.UserName == request.UserName && order.Status == request.Status
+                                 orderby order.Date descending
                                  select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, element.UserName ?? string.Empty, order.DeliveryAddress)).ToListAsync();
                         case "rider":
                             return
@@ -54,6 +55,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join rider in _context.Users on order.RiderId equals rider.Id into leftRiderJoin
                                  from element in leftRiderJoin.DefaultIfEmpty()
                                  where element.UserName == request.UserName && order.Status == request.Status
+                                 orderby order.Date descending
                                  select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, element.UserName ?? string.Empty, order.DeliveryAddress)).ToListAsync();
                         default:
                             return
@@ -63,6 +65,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join rider in _context.Users on order.RiderId equals rider.Id into leftRiderJoin
                                  from element in leftRiderJoin.DefaultIfEmpty()
                                  where user.UserName == request.UserName && order.Status == request.Status
+                                 orderby order.Date descending
                                  select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, element.UserName ?? string.Empty, order.DeliveryAddress)).ToListAsync();
                     }
                 }
@@ -78,6 +81,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join rider in _context.Users on order.RiderId equals rider.Id into leftRiderJoin
                                  from element in leftRiderJoin.DefaultIfEmpty()
                                  where restaurateur.UserName == request.UserName
+                                 orderby order.Date descending
                                  select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, element.UserName ?? string.Empty, order.DeliveryAddress)).ToListAsync();
                         case "rider":
                             return
@@ -87,6 +91,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join rider in _context.Users on order.RiderId equals rider.Id into leftRiderJoin
                                  from element in leftRiderJoin.DefaultIfEmpty()
                                  where element.UserName == request.UserName
+                                 orderby order.Date descending
                                  select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, element.UserName ?? string.Empty, order.DeliveryAddress)).ToListAsync();
                         default:
                             return
@@ -96,6 +101,7 @@ namespace FoodDelivery.Services.Orders.Queries
                                  join rider in _context.Users on order.RiderId equals rider.Id into leftRiderJoin
                                  from element in leftRiderJoin.DefaultIfEmpty()
                                  where user.UserName == request.UserName
+                                 orderby order.Date descending
                                  select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, element.UserName ?? string.Empty, order.DeliveryAddress)).ToListAsync();
                     }
                 }
@@ -111,6 +117,7 @@ namespace FoodDelivery.Services.Orders.Queries
                          join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                          join rider in _context.Users on order.RiderId equals rider.Id into leftRiderJoin
                          from element in leftRiderJoin.DefaultIfEmpty()
+                         orderby order.Date descending
                          select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, element.UserName ?? string.Empty, order.DeliveryAddress)).ToListAsync();
                 }
                 else
@@ -121,6 +128,7 @@ namespace FoodDelivery.Services.Orders.Queries
                          join restaurateur in _context.Users on order.RestaurateurId equals restaurateur.Id
                          join rider in _context.Users on order.RiderId equals rider.Id into leftRiderJoin
                          from element in leftRiderJoin.DefaultIfEmpty()
+                         orderby order.Date descending
                          select new GetOrdersModel(order.Id, order.Date.ToString("dd/MM/yyyy HH:mm"), order.Status, user.UserName, restaurateur.UserName, element.UserName ?? string.Empty, order.DeliveryAddress)).ToListAsync();
                 }
             }

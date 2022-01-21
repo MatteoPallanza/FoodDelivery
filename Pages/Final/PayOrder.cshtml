@@ -1,0 +1,30 @@
+﻿@page
+@model FoodDelivery.Pages.Final.PayOrderModel
+@{
+    ViewData["Title"] = "Pay Order";
+}
+
+<h4>@ViewData["Title"]</h4>
+<p>In this page you can <strong>pay your order</strong> using your preferred <strong>payment method</strong>.</p>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
+<form asp-page="PayOrder">
+    <div class="form-group">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Input.OrderId"></label>
+            <input asp-for="Input.OrderId" class="form-control" readonly />
+            <span asp-validation-for="Input.OrderId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Input.Total"></label>
+            <input asp-for="Input.Total" class="form-control" readonly />
+            <span asp-validation-for="Input.Total" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Pay Now</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

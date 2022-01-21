@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,51 +24,82 @@ namespace FoodDelivery.Pages.Final
             _userManager = userManager;
         }
 
-        public string RestaurateurId { get; set; }
-
-        public Data.Restaurateur RestauratorDetails { get; set; }
-
-        public List<Product> Products { get; set; }
+        public Data.Restaurateur Restaurator { get; set; }
 
         public string Category { get; set; }
 
-        public void OnGet(string restaurateurId)
+        public List<Product> Products { get; set; }
+
+        public List<SelectListItem> DeliveryAddresses = new();
+
+        [BindProperty]
+        public InputModel Input { get; set; }
+
+        public class InputModel
         {
-            RestaurateurId = restaurateurId;
+            [Display(Name = "Delivery Address")]
+            [BindProperty]
+            [Required]
+            public string DeliveryAddress { get; set; }
+        }
+
+        private void Load(ApplicationUser user)
+        {
+            var deliveryAddresses =
+                (from a in _context.UserAddresses
+                 where a.UserId == user.Id
+                 select a);
+
+            foreach (var address in deliveryAddresses)
+            {
+                var addressString = address.Address.ToString() + ", " + address.PostalCode.ToString() + " " + address.City.ToString();
+
+                DeliveryAddresses.Add(new SelectListItem() { Text = addressString, Value = addressString });
+            }
+        }
+
+        public async Task<IActionResult> OnGetAsync(string restaurateurId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
             var restaurateur =
                 (from rd in _context.Restaurateurs
                  where rd.UserId == restaurateurId
                  select rd).FirstOrDefault();
 
-            var categories =
-                (from cat in _context.RestaurateurCategories
-                 select cat).ToArray();
-
-            if (restaurateur != null)
+            if (restaurateur == null)
             {
-                RestauratorDetails = restaurateur;
-
-                var category=
-                    (from cat in _context.RestaurateurCategories
-                     where cat.Id == restaurateur.CategoryId
-                     select cat.Name).FirstOrDefault();
-
-                if (category != null)
-                {
-                    Category = category;
-                }
-
-                var products = 
-                    (from prod in _context.Products
-                     where prod.UserId == restaurateurId
-                     select prod).ToList();
-
-                Products = products;
+                return NotFound("Error: unable to load restaurator with ID " + restaurateurId + ".");
             }
+
+            Restaurator = restaurateur;
+
+            var category =
+                (from cat in _context.RestaurateurCategories
+                 where cat.Id == restaurateur.CategoryId
+                 select cat.Name).FirstOrDefault();
+
+            if (category != null)
+            {
+                Category = category;
+            }
+
+            var products =
+                (from prod in _context.Products
+                 where prod.UserId == restaurateurId
+                 select prod).ToList();
+
+            Products = products;
+
+            Load(user);
+            return Page();
         }
 
-        public async Task<IActionResult> OnPost(string restaurateurId)
+        public async Task<IActionResult> OnPostAsync(string restaurateurId)
         {
             var restaurateur =
                 (from rest in _context.Restaurateurs
@@ -74,9 +107,18 @@ namespace FoodDelivery.Pages.Final
                  select rest).FirstOrDefault();
 
             var user = await _userManager.GetUserAsync(User);
-            string userId = user.Id;
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            string deliveryAddress = Request.Form["deliveryAddress"].FirstOrDefault();
+            if (!ModelState.IsValid)
+            {
+                Load(user);
+                return Page();
+            }
+
+            string deliveryAddress = Input.DeliveryAddress;
 
             var products =
                 (from product in _context.Products
@@ -98,18 +140,18 @@ namespace FoodDelivery.Pages.Final
                 {
                     if (!orderCreated)
                     {
-                        order = new Order { Date = DateTime.Now, Status = 2, UserId = userId, RestaurateurId = restaurateurId , DeliveryAddress = deliveryAddress};
+                        order = new Order { Date = DateTime.Now, Status = 1, UserId = user.Id, RestaurateurId = restaurateurId , DeliveryAddress = deliveryAddress};
                         orderCreated = true;
 
                         _context.Orders.Add(order);
                         _context.SaveChanges();
                     }
 
-                    var grossPrice =
+                    var price =
                         (from product in products
                          where product.Id == id
                          select new { Price = product.Price, Discount = product.Discount }).FirstOrDefault();
-                    var finalPrice = grossPrice.Price - grossPrice.Discount;
+                    var finalPrice = price.Price - price.Discount;
 
                     OrderDetail orderDetail = new() { OrderId = order.Id, ProductId = id, Quantity = qty , Price = finalPrice};
                     _context.OrderDetails.Add(orderDetail);
@@ -117,9 +159,7 @@ namespace FoodDelivery.Pages.Final
                 }
             }
 
-            return RedirectToPage("OrderCompleted", new {orderId = order.Id});
+            return RedirectToPage("PayOrder", new {orderId = order.Id});
         }
-
-
     }
 }

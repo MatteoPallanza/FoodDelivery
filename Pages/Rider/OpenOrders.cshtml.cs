@@ -36,18 +36,16 @@ namespace FoodDelivery.Pages.Rider
             public int OrderId { get; set; }
         }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            var orderId = Input.OrderId;
-
             var order =
                 (from o in _context.Orders
-                 where o.Id == orderId
+                 where o.Id == Input.OrderId
                  select o).FirstOrDefault();
 
             if (order == null)
@@ -58,18 +56,17 @@ namespace FoodDelivery.Pages.Rider
 
             if (order.Status > 2)
             {
-                StatusMessage = "Error: the order " + orderId + " has been already picked up.";
+                StatusMessage = "Error: the order " + Input.OrderId + " has been already picked up.";
                 return RedirectToPage();
             }
             else
             {
                 var user = await _userManager.GetUserAsync(User);
-                var riderId = user.Id;
 
                 order.Status = 3;
-                order.RiderId = riderId;
+                order.RiderId = user.Id;
                 await _context.SaveChangesAsync();
-                return RedirectToPage("Deliver", new { orderId });
+                return RedirectToPage("Deliver", new { orderId = Input.OrderId });
             }
         }
     }

@@ -1,4 +1,3 @@
-using FoodDelivery.Authorization;
 using FoodDelivery.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -8,15 +7,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FoodDelivery.Pages.Rider
+namespace FoodDelivery.Pages.Final
 {
-    [Authorize(Policy = PolicyName.IsRider)]
-    public class DeliverModel : PageModel
+    [Authorize]
+    public class PayOrderModel : PageModel
     {
         private readonly ApplicationDbContext _context;
         readonly UserManager<ApplicationUser> _userManager;
 
-        public DeliverModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public PayOrderModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -34,15 +33,32 @@ namespace FoodDelivery.Pages.Rider
             [BindProperty]
             [Required]
             public int OrderId { get; set; }
+
+            [Display(Name = "Total")]
+            [BindProperty]
+            [Required]
+            public decimal Total { get; set; }
         }
 
-        public string DeliveryAddress { get; set; }
+        public decimal Total { get; set; }
 
         private void Load(int orderId)
         {
+            decimal total = 0;
+            var partials =
+                (from od in _context.OrderDetails
+                 where od.OrderId == orderId
+                 select od).ToList();
+
+            foreach (var item in partials)
+            {
+                total += item.Price * item.Quantity;
+            }
+
             Input = new InputModel
             {
-                OrderId = orderId
+                OrderId = orderId,
+                Total = total
             };
         }
 
@@ -50,19 +66,17 @@ namespace FoodDelivery.Pages.Rider
         {
             var order =
                 (from o in _context.Orders
-                 where o.Id == orderId && o.Status < 4
+                 where o.Id == orderId && o.Status < 2
                  select o).FirstOrDefault();
 
             var userId = _userManager.GetUserId(User);
 
-            // per evitare che altri rider vedano il percorso di un ordine altrui o di ordini completati
-            if ((order == null) || (userId != order.RiderId))
+            if ((order == null) || (userId != order.UserId))
             {
-                return NotFound("Error: no order exists with the defined ID, the order has already been marked as delivered or you aren't allowed to access this page.");
+                return NotFound("Error: no order exists with the defined ID, the order has already been paid or you aren't allowed to access this page.");
             }
             else
             {
-                DeliveryAddress = order.DeliveryAddress;
                 Load(orderId);
                 return Page();
             }
@@ -86,23 +100,22 @@ namespace FoodDelivery.Pages.Rider
                 return RedirectToPage(new { orderId = Input.OrderId });
             }
 
-            // per evitare che altri rider contrassegnino come consegnato un ordine altrui
             var userId = _userManager.GetUserId(User);
-            if (userId != order.RiderId)
+            if (userId != order.UserId)
             {
                 return NotFound("Error: you aren't allowed to access this page.");
             }
 
-            if (order.Status > 3)
+            if (order.Status > 1)
             {
-                StatusMessage = "Error: the order " + Input.OrderId + " has already been marked as delivered.";
+                StatusMessage = "Error: the order " + Input.OrderId + " has already been paid.";
                 return RedirectToPage(new { orderId = Input.OrderId });
             }
             else
             {
-                order.Status = 4;
+                order.Status = 2;
                 await _context.SaveChangesAsync();
-                return RedirectToPage("Delivered", new { orderId = Input.OrderId });
+                return RedirectToPage("OrderCompleted", new { orderId = Input.OrderId });
             }
         }
     }

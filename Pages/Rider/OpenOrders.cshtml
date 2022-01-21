@@ -69,18 +69,11 @@
                 },
 
                 fields: [
-                    { name: "id", type: "number", title: "ID", align: "center"},
-                    { name: "date", type: "text", title: "Date", align: "center"},
-                    { name: "status", type: "select", title: "Status", items: [
-                        {"id":0, "name":"Tutti"},
-                        {"id":1, "name":"Carrello"},
-                        {"id":2, "name":"Inserito"},
-                        {"id":3, "name":"In carico"},
-                        {"id":4, "name":"Consegnato"}
-                    ], valueField: "id", textField: "name" },
-                    { name: "userName", type: "text", title: "User", align: "center"},
-                    { name: "restaurateurName", type: "text", title: "Restaurateur", align: "center"},
-                    { name: "riderName", type: "text", title: "Rider", align: "center"}
+                    { name: "id", type: "number", width: 50, title: "ID", align: "center" },
+                    { name: "date", type: "text", title: "Date", align: "center" },
+                    { name: "userName", type: "text", title: "User", align: "center" },
+                    { name: "restaurateurName", type: "text", title: "Restaurateur", align: "center" },
+                    { name: "deliveryAddress", type: "text", width: 150, title: "Delivery Address", align: "center" }
                 ]
             });
         });

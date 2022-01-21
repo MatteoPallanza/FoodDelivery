@@ -1,0 +1,9 @@
+﻿@page
+@model FoodDelivery.Pages.Final.OrderCompletedModel
+@{
+    ViewData["Title"] = "Order Completed";
+}
+
+<h4>@ViewData["Title"]</h4>
+<p>Order @Model.OrderId has been placed succesfully.</p>
+<p><a class="btn btn-primary" role="button" asp-page="/Final/Index">Go Back to Client Panel</a></p>

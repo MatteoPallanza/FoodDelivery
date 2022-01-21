@@ -5,12 +5,13 @@
 }
 
 <h4>@ViewData["Title"]</h4>
+
 <hr/>
 <div class="row">
     <div clas="col-md-6">
-        @if (Model.RestauratorDetails.Logo != null)
+        @if (Model.Restaurator.Logo != null)
         {
-            <img id="logo" style="width:120px;height:120px; object-fit:cover" src="data:image/*;base64,@(Convert.ToBase64String(Model.RestauratorDetails.Logo))">
+            <img id="logo" style="width:120px;height:120px; object-fit:cover" src="data:image/*;base64,@(Convert.ToBase64String(Model.Restaurator.Logo))">
         }
         else
         {
@@ -18,11 +19,11 @@
         }
     </div>
     <div class="col-md-6">
-        <h5>@Model.RestauratorDetails.Name</h5>
+        <h5>@Model.Restaurator.Name</h5>
         <p><strong>@Model.Category</strong></p>
         <p>
-            @Model.RestauratorDetails.Address<br/>
-            @Model.RestauratorDetails.PostalCode&nbsp;@Model.RestauratorDetails.City<br/>
+            @Model.Restaurator.Address<br/>
+            @Model.Restaurator.PostalCode&nbsp;@Model.Restaurator.City
         </p>
     </div>
 </div>
@@ -31,14 +32,33 @@
 <form method="post">
 @foreach (var product in Model.Products)
 {
-    <p>
-        <h6>@product.Name</h6>
-        <strong>Price: </strong>@product.Price<br/>
-        <strong>Discount: </strong>@product.Discount<br/>
-        <strong>Quantity: </strong><input type="number" name="prod_@product.Id"/>
-    </p>
+    <div class="row">
+        <div class="col-md-6">
+            <p>
+                <h6>@product.Name</h6>
+                <strong>Price: </strong>@product.Price<br/>
+                <strong>Discount: </strong>@product.Discount
+            </p>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="prod_@product.Id">Quantity</label>
+                <input type="number" name="prod_@product.Id" id="prod_@product.Id" class="form-control"/>
+            </div>
+        </div>
+    </div>
     <hr/>
 }
-<input type="text" name="deliveryAddress"/>
-<input type="submit" class="btn btn-primary"  value="Post" />
+
+<div class="form-group">
+    <label asp-for="Input.DeliveryAddress"></label>
+    <select asp-for="Input.DeliveryAddress" asp-items="Model.DeliveryAddresses" class="form-control"></select>
+    <span asp-validation-for="Input.DeliveryAddress"></span>
+</div>
+
+<input type="submit" class="btn btn-primary" value="Place Order" />
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

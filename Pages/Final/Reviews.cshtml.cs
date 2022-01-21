@@ -66,7 +66,7 @@ namespace FoodDelivery.Pages.Final
             public string ReviewText { get; set; }
         }
 
-        private void LoadAsync(ApplicationUser user)
+        private void Load(ApplicationUser user)
         {
             var completedOrders =
                 (from o in _context.Orders
@@ -89,7 +89,7 @@ namespace FoodDelivery.Pages.Final
 
             UserId = user.Id;
 
-            LoadAsync(user);
+            Load(user);
             return Page();
         }
 
@@ -103,7 +103,7 @@ namespace FoodDelivery.Pages.Final
 
             if (!ModelState.IsValid)
             {
-                LoadAsync(user);
+                Load(user);
                 return Page();
             }
 

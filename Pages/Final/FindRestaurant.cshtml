@@ -1,5 +1,374 @@
 ﻿@page
 @model FoodDelivery.Pages.Final.FindRestaurantModel
 @{
+    ViewData["Title"] = "Find a Restaurant";
 }
-placeholder
+
+<html>
+    <head>
+        <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css" rel="stylesheet">
+        <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css" rel="stylesheet" />
+
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            a {
+                color: #1b6ec2;
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: #1861ac;
+                text-decoration: none;
+            }
+
+            .sidebar {
+                position: absolute;
+                width: 33.3333%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                overflow: hidden;
+                border-right: 1px solid rgba(0, 0, 0, 0.25);
+            }
+
+            .map {
+                position: absolute;
+                left: 33.3333%;
+                width: 66.6666%;
+                top: 0;
+                bottom: 0;
+            }
+
+            .heading {
+                background: #fff;
+                border-bottom: 1px solid #eee;
+                min-height: 60px;
+                line-height: 60px;
+                padding: 20px 10px;
+                background-color: #1b6ec2;
+                color: #fff;
+            }
+
+            .listings {
+                height: 100%;
+                overflow: auto;
+                padding-bottom: 60px;
+            }
+
+            .listings .item {
+                border-bottom: 1px solid #eee;
+                padding: 10px;
+                text-decoration: none;
+            }
+
+            .listings .item:last-child { border-bottom: none; }
+
+            .listings .item .title {
+                display: block;
+                color: #007bff;
+                font-weight: 700;
+            }
+
+            .listings .item .title small { font-weight: 400; }
+
+            .listings .item.active .title,
+            .listings .item .title:hover { color: #1861ac; }
+
+            .listings .item.active {
+                background-color: #f8f8f8;
+            }
+
+            ::-webkit-scrollbar {
+                width: 3px;
+                height: 3px;
+                border-left: 0;
+                background: rgba(0, 0, 0, 0.1);
+            }
+
+            ::-webkit-scrollbar-track {
+                background: none;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #00853e;
+                border-radius: 0;
+            }
+
+            /* Marker tweaks */
+            .mapboxgl-popup-close-button {
+                display: none;
+            }
+
+            .mapboxgl-popup-content {
+                padding: 0;
+                width: 180px;
+            }
+
+            .mapboxgl-popup-content h5 {
+                background: #1b6ec2;
+                color: #fff;
+                margin: 0;
+                padding: 10px;
+                border-radius: 3px 3px 0 0;
+                font-weight: 700;
+                margin-top: -15px;
+            }
+
+            .mapboxgl-popup-content p {
+                font-size: 15px;
+                margin: 0;
+                padding: 10px;
+                font-weight: 400;
+            }
+
+            .mapboxgl-popup-content .btn {
+                margin-top: 10px;
+            }
+
+            .mapboxgl-popup-content div {
+                padding: 10px;
+            }
+
+            .mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
+                margin-top: 15px;
+            }
+
+            .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
+                border-bottom-color: #91c949;
+            }
+
+            .marker {
+                border: none;
+                cursor: pointer;
+                height: 56px;
+                width: 56px;
+                background-image: url(/assets/images/marker.png);
+            }
+
+            .mapboxgl-popup {
+                padding-bottom: 50px;
+            }
+
+            .mapboxgl-ctrl-geocoder {
+                border: 0;
+                border-radius: 0;
+                position: relative;
+                top: 0;
+                width: 800px;
+                margin-top: 0;
+            }
+
+            .mapboxgl-ctrl-geocoder > div {
+                min-width: 100%;
+                margin-left: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <h4>@ViewData["Title"]</h4>
+        <p>In this page you can <strong>find a restaurant</strong> and <strong>place an order</strong>.</p>
+        <div style="width: 100%; height: 600px; position: relative;">
+            <div class="sidebar">
+                <div class="heading">
+                    <h4>Nearby Restaurants</h4>
+                </div>
+                <div id="listings" class="listings"></div>
+            </div>
+            <div id="map" class="map"></div>
+        </div>
+
+        <div id="geoJson" style="visibility: hidden">@Model.JsonRestaurants</div>
+    </body>
+</html>
+
+@section Scripts {
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
+    <script src="https://npmcdn.com/%40turf/turf/turf.min.js"></script>
+
+    <script>
+        // Access Token MapBox.
+        var accessToken = "pk.eyJ1IjoibWF0dGVvLXBhbGxhbnphIiwiYSI6ImNreWxhdXl1djM0ZWoycHBiNGZzZTlua2UifQ.JaWFbpGuWR1mz0LM0ulAwQ";
+
+        // Geolocalizzo l"utente per definire la posizione iniziale della mappa.
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showMap);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+
+        function showMap(position) {
+            mapboxgl.accessToken = accessToken;
+
+            var lng = position.coords.longitude;
+            var lat = position.coords.latitude;  
+
+            var map = new mapboxgl.Map({
+                container: "map",
+                style: "mapbox://styles/mapbox/streets-v11",
+                center: [lng, lat],
+                zoom: 13
+            });
+
+            const restaurants = JSON.parse(document.getElementById("geoJson").innerHTML);
+
+            map.on("load", () => {
+                var current = {
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {
+                    "type": "Point",
+                    "coordinates": [lng, lat]
+                    }
+                };
+                updateListing(current);
+                
+                /* Add the data to your map as a layer */
+                map.addSource("places", {
+                    type: "geojson",
+                    data: restaurants
+                });
+                addMarkers();
+
+                const geocoder = new MapboxGeocoder({
+                      accessToken: mapboxgl.accessToken, // Set the access token
+                      mapboxgl: mapboxgl, // Set the mapbox-gl instance
+                      marker: false
+                });
+
+                map.addControl(geocoder, "top-left");
+
+                geocoder.on("result", (event) => {
+                    const searchResult = event.result.geometry;
+                    updateListing(searchResult);
+                });
+            });
+
+            function updateListing (position) {
+                const options = { units: "kilometers" };
+                for (const store of restaurants.features) {
+                    store.properties.distance = turf.distance(
+                        position,
+                        store.geometry,
+                        options
+                    );
+                }
+                restaurants.features.sort((a, b) => {
+                    if (a.properties.distance > b.properties.distance) {
+                        return 1;
+                    }
+                    if (a.properties.distance < b.properties.distance) {
+                        return -1;
+                    }
+                    return 0; // a must be equal to b
+                });
+                const listings = document.getElementById("listings");
+                while (listings.firstChild) {
+                    listings.removeChild(listings.firstChild);
+                }
+                buildLocationList(restaurants);
+            }
+
+            function addMarkers() {
+                /* For each feature in the GeoJSON object above: */
+                for (const marker of restaurants.features) {
+                    /* Create a div element for the marker. */
+                    const el = document.createElement("div");
+                    /* Assign a unique `id` to the marker. */
+                    el.id = `marker-${marker.properties.id}`;
+                    /* Assign the `marker` class to each marker for styling. */
+                    el.className = "marker";
+
+                    /**
+                    * Create a marker using the div element
+                    * defined above and add it to the map.
+                    **/
+                    new mapboxgl.Marker(el, { offset: [0, -23] })
+                        .setLngLat(marker.geometry.coordinates)
+                        .addTo(map);
+
+                        el.addEventListener("click", (e) => {
+                        /* Fly to the point */
+                        flyToStore(marker);
+                        /* Close all other popups and display popup for clicked store */
+                        createPopUp(marker);
+                        /* Highlight listing in sidebar */
+                        const activeItem = document.getElementsByClassName("active");
+                        e.stopPropagation();
+                        if (activeItem[0]) {
+                        activeItem[0].classList.remove("active");
+                        }
+                        const listing = document.getElementById(`listing-${marker.properties.id}`);
+                        listing.classList.add("active");
+                    });
+                }
+            }
+
+            function buildLocationList(stores) {
+                for (const store of stores.features) {
+                    /* Add a new listing section to the sidebar. */
+                    const listings = document.getElementById("listings");
+                    const listing = listings.appendChild(document.createElement("div"));
+                    /* Assign a unique `id` to the listing. */
+                    listing.id = `listing-${store.properties.id}`;
+                    /* Assign the `item` class to each listing for styling. */
+                    listing.className = "item";
+
+                    /* Add the link to the individual listing created above. */
+                    const link = listing.appendChild(document.createElement("a"));
+                    link.href = "#";
+                    link.className = "title";
+                    link.id = `link-${store.properties.id}`;
+                    link.innerHTML = `${store.properties.name}`;
+
+                    /* Add details to the individual listing. */
+                    const details = listing.appendChild(document.createElement("div"));
+                    details.innerHTML = `${store.properties.address}, ${store.properties.postalCode} ${store.properties.city}`;
+                    
+                    if (store.properties.distance) {
+                        const roundedDistance = Math.round(store.properties.distance * 100) / 100;
+                        details.innerHTML += `<div><strong>${roundedDistance} kilometers away</strong></div>`;
+                    }
+
+                    link.addEventListener("click", function () {
+                        for (const feature of stores.features) {
+                            if (this.id === `link-${feature.properties.id}`) {
+                                flyToStore(feature);
+                                createPopUp(feature);
+                            }
+                        }
+                        const activeItem = document.getElementsByClassName("active");
+                        if (activeItem[0]) {
+                            activeItem[0].classList.remove("active");
+                        }
+                        this.parentNode.classList.add("active");
+                    });
+                }
+            }
+
+            function flyToStore(currentFeature) {
+                map.flyTo({
+                center: currentFeature.geometry.coordinates,
+                zoom: 15
+                });
+            }
+
+            function createPopUp(currentFeature) {
+                const popUps = document.getElementsByClassName("mapboxgl-popup");
+                /** Check if there is already a popup on the map and if so, remove it */
+                if (popUps[0]) popUps[0].remove();
+
+                const popup = new mapboxgl.Popup({ closeOnClick: true })
+                .setLngLat(currentFeature.geometry.coordinates)
+                .setHTML(`<h5>${currentFeature.properties.name}</h5><p>${currentFeature.properties.address}<br/>${currentFeature.properties.postalCode} ${currentFeature.properties.city}<br/><a class="btn btn-primary" href="Order?restaurateurId=${currentFeature.properties.userId}">Order Now</a></p>`)
+                .addTo(map);
+            }
+
+            // Aggiungo i controlli di zoom e rotazione della mappa.
+            map.addControl(new mapboxgl.NavigationControl());
+        }
+    </script>
+}

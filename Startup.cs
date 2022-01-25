@@ -204,7 +204,9 @@ namespace FoodDelivery
                         new RestaurateurCategory { Name = "Steakhouse"},
                         new RestaurateurCategory { Name = "Fast Food"},
                         new RestaurateurCategory { Name = "Poke"},
-                        new RestaurateurCategory { Name = "Kebab"}
+                        new RestaurateurCategory { Name = "Kebab"},
+                        new RestaurateurCategory { Name = "Pastry"},
+                        new RestaurateurCategory { Name = "Other"}
                     });
 
                     context.SaveChanges();
@@ -226,23 +228,6 @@ namespace FoodDelivery
                 {
                     context.RiderFees.AddRange(new RiderFee { Fee = 4 });
 
-                    context.SaveChanges();
-                }
-
-                //--- QUI SOTTO LINEE DI TEST ---
-                if (!context.Restaurateurs.Any())
-                {
-                    context.Restaurateurs.Add(new Restaurateur { Name = "RestAdmin", Address = "Via Nicorvo 136/P", City = "Robbio", PostalCode = "27038", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", CategoryId = 6 });
-                    context.SaveChanges();
-                }
-
-                if (!context.Orders.Any())
-                {
-                    context.Orders.AddRange(new[] {
-                        new Order { Date = DateTime.Now, Status = 3, RiderId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", RestaurateurId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355" },
-                        new Order { Date = DateTime.Now, Status = 4, RiderId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", RestaurateurId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355" },
-                        new Order { Date = DateTime.Now, Status = 4, RiderId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", UserId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355", RestaurateurId = "5859f1f4-9d3b-4ab4-9d04-d008d2e5b355" },
-                    });
                     context.SaveChanges();
                 }
             }

@@ -32,6 +32,9 @@ namespace FoodDelivery.Pages.Final
 
         public List<SelectListItem> DeliveryAddresses = new();
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
         [BindProperty]
         public InputModel Input { get; set; }
 
@@ -157,6 +160,12 @@ namespace FoodDelivery.Pages.Final
                     _context.OrderDetails.Add(orderDetail);
                     _context.SaveChanges();
                 }
+            }
+
+            if (!orderCreated)
+            {
+                StatusMessage = "Error: you cannot place an empty order.";
+                return RedirectToPage(new { restaurateurId });
             }
 
             return RedirectToPage("PayOrder", new {orderId = order.Id});
